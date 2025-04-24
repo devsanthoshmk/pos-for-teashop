@@ -17,11 +17,11 @@ python -m venv venv
 ## Activate venv
 #### Command Prompt
 ``` cmd
-.\\Scripts\\activate.bat. 
+.\\Scripts\\activate.bat
 ```
 #### PowerShell
 ``` PowerShell
-.\\Scripts\\Activate.ps1. 
+.\\Scripts\\Activate.ps1
 ```
 #### Bash
 ``` bash
