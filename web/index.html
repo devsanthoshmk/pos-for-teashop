@@ -105,7 +105,7 @@
         
         .table-wrap {
           height: 28vh;
-          overflow: scroll;
+          overflow-y: scroll;
         }
 
         .bill-table {
@@ -241,6 +241,76 @@
           }
 
         }
+
+        /* overlay css clear confirm css */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+          }
+          
+          .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+          }
+          
+          .modal-content h3 {
+            color: #5b3e29;
+            margin-bottom: 15px;
+          }
+          
+          .modal-content p {
+            margin-bottom: 20px;
+            color: #333;
+          }
+          
+          .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+          }
+          
+          .btn-cancel {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+          }
+          
+          .btn-confirm {
+            background-color: #d9534f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+          }
+          
+          .btn-cancel:hover {
+            background-color: #d0d0d0;
+          }
+          
+          .btn-confirm:hover {
+            background-color: #c9302c;
+          }
     </style>
 </head>
 <body>
@@ -320,7 +390,7 @@
                     <span id='subtotal'>-</span>
                 </div>
                 <div class="bill-row">
-                    <span>Tax (5%):</span>
+                    <span>Tax:</span>
                     <span id='tax'>-</span>
                 </div>
                 <div class="bill-row">
@@ -330,55 +400,27 @@
             </div>
             
             <div class="action-buttons">
-                <button class="btn btn-print" onclick="if(tot>1){ window.print();clearbill();} else alert('Please add items to PRINT BILL')">Print Bill</button>
-                <button class="btn btn-clear" onClick="clearbill()">Clear</button>
+                <button class="btn btn-print" id="print">Print Bill</button>
+                <button class="btn btn-clear" id="clear">Clear</button>
             </div>
         </div>
     </div>
+    <!-- window to ask clear conformation -->
+    <div class="modal-overlay" id="clearConfirmModal">
+        <div class="modal-content">
+          <h3>Clear Bill</h3>
+          <p>Are you sure you want to clear the current bill?</p>
+          <div class="modal-buttons">
+            <button class="btn btn-cancel" id="cancelClear">Cancel</button>
+            <button class="btn btn-confirm" id="confirmClear">Clear Bill</button>
+          </div>
+        </div>
+      </div>
 
-    <script type="text/javascript">
-      let items={
-        1: {
-          "name": "Tea",
-          "price": 15.00,
-          "availability": "yes"
-        },
-        2: {
-          "name": "Special Tea",
-          "price": 25.00,
-          "availability": "no"
-        },
-        3: {
-          "name": "Black Tea",
-          "price": 20.00,
-          "availability": "yes"
-        },
-        4: {
-          "name": "Coffee",
-          "price": 20.00,
-          "availability": "yes"
-        },
-        5: {
-          "name": "Black Coffee",
-          "price": 25.00,
-          "availability": "yes"
-        },
-        6: {
-          "name": "Milk",
-          "price": 15.00,
-          "availability": "yes"
-        },
-        7: {
-          "name": "Samosa",
-          "price": 20.00,
-          "availability": 50
-        },
-        8: {
-          "name": "Puffs",
-          "price": 20.00,
-          "availability": 30
-        }
-      }
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="module">
+      let items=await eel.inventory()();
+      console.log(items);
       const og_items={...items};
       let isFirst=true;
       let tot = 0; //subtotal of the products added dynamically
@@ -391,7 +433,7 @@
 
       function addItem(itemid){
         const billit= document.getElementById('billing')
-        const item=items[itemid];
+        const item=items[itemid-1];
         item["qty"]= item["qty"]+1 || 1;
 
         const itemtot=item.qty*item.price
@@ -416,7 +458,7 @@
 
 
         // updating total
-        taxamt=6.5
+        const taxamt=6.5
         subtotal.textContent=`₹${tot.toFixed(2)}`;
         tax.textContent=`₹${taxamt.toFixed(2)}`;
         total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
@@ -424,22 +466,6 @@
       }
 
       document.querySelectorAll('.menu-item').forEach((ele) => ele.addEventListener('click',() => addItem(ele.dataset.itemid)))
-
-      // clear btn function
-      function clearbill(){
-        items={...og_items};
-        tot=0;
-        isFirst=true;
-        document.getElementById('billing').innerHTML=`<tr>
-                          <td>-</td>
-                          <td>-</td>
-                          <td>-</td>
-                          <td>-</td>
-                      </tr>`;
-        subtotal.textContent="-";
-        tax.textContent="-";
-        total.textContent="-";
-      }
 
       // for date and time
       function getFormattedDateTime(ele) {
@@ -457,6 +483,54 @@
       }
 
       getFormattedDateTime(document.getElementById('date-time'));
+
+      //print handling
+      document.getElementById('print').addEventListener('click', () => {
+        if (tot > 1) {
+          window.print();
+          clearbill();
+        } else {
+          alert('Please add items to PRINT BILL');
+        }
+      });
+
+      // clear btn function
+      function clearbill(){
+        //btns in overlay
+        const cancelbtn=document.getElementById('cancelClear')
+        const clearbtn=document.getElementById('confirmClear')
+
+        //hide clear confirm overlay
+        function hideconf(bol){
+            document.getElementById('clearConfirmModal').style.display = 'none';
+            cancelbtn.removeEventListener('click',hideconf);
+            clearbtn.removeEventListener('click',confirmClear);
+        }
+        //handling clear bill
+        function confirmClear(bol){
+            document.getElementById('billing').innerHTML=`<tr>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                        </tr>`;
+            subtotal.textContent=`₹0.00`;
+            tax.textContent=`₹0.00`;
+            total.textContent=`₹0.00`;
+            items=og_items;
+            isFirst=true;
+            tot=0;
+            hideconf();
+        }
+        
+        //show clear confirm overlay
+        document.getElementById('clearConfirmModal').style.display = 'flex';
+
+        cancelbtn.addEventListener('click',hideconf);
+        
+        clearbtn.addEventListener('click', confirmClear);
+      }
+      document.getElementById('clear').addEventListener('click',clearbill);
     </script>
 </body>
 </html>
