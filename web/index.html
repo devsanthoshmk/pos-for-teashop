@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Shop Billing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 4px;
+            overflow: clip;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        header {
+            background-color: #5b3e29;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .tagline {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #e6ccb3;
+        }
+        
+        .menu-section {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bill-section {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            color: #5b3e29;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e6ccb3;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .menu-item {
+            background-color: #f9f3ed;
+            border: 1px solid #e6ccb3;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .menu-item:hover {
+            background-color: #e6ccb3;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-item h3 {
+            color: #5b3e29;
+            margin-bottom: 10px;
+        }
+        
+        .menu-item p {
+            color: #8c6e5a;
+            font-weight: bold;
+        }
+        
+        .table-wrap {
+          height: 28vh;
+          overflow: scroll;
+        }
+
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            flex-grow: 1;
+
+        }
+        
+        .bill-table th, .bill-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e6ccb3;
+        }
+        
+        .bill-table th {
+            background-color: #f9f3ed;
+            color: #5b3e29;
+        }
+        
+        .bill-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .bill-summary {
+            margin-top: auto;
+            background-color: #f9f3ed;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+
+        }
+        
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .bill-row:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 2px solid #e6ccb3;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-print {
+            background-color: #5b3e29;
+            color: white;
+        }
+        
+        .btn-clear {
+            background-color: #e6ccb3;
+            color: #5b3e29;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .date-time {
+            text-align: right;
+            color: #8c6e5a;
+            margin-bottom: 15px;
+        }
+        
+        .bill-empty {
+            text-align: center;
+            color: #8c6e5a;
+            font-style: italic;
+            padding: 40px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media print{
+
+          /* Element | http://localhost:8000/index.html */
+
+          .menu-section {
+            display: none;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          .table-wrap {
+            overflow: unset;
+            height: unset;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          body {
+            overflow: unset;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          .action-buttons {
+            display: none;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          #bill-summary {
+            box-shadow: 0 0 0;
+          }
+
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Tea shop</div>
+        <div class="tagline">Tea, Coffee, Snacks</div>
+    </header>
+    
+    <div class="container">
+        <div class="menu-section">
+            <h2>Menu Items</h2>
+            <div class="menu-grid">
+                <div class="menu-item" data-itemid="1">
+                    <h3>Tea</h3>
+                    <p>₹15.00</p>
+                </div>
+                <div class="menu-item" data-itemid="2">
+                    <h3>Special Tea</h3>
+                    <p>₹25.00</p>
+                </div>
+                <div class="menu-item" data-itemid="3">
+                    <h3>Black Tea</h3>
+                    <p>₹20.00</p>
+                </div>
+                <div class="menu-item" data-itemid="4">
+                    <h3>Coffee</h3>
+                    <p>₹20.00</p>
+                </div>
+                <div class="menu-item" data-itemid="5">
+                    <h3>Black Coffee</h3>
+                    <p>₹25.00</p>
+                </div>
+                <div class="menu-item" data-itemid="6">
+                    <h3>Milk</h3>
+                    <p>₹15.00</p>
+                </div>
+                <div class="menu-item" data-itemid="7">
+                    <h3>Samosa</h3>
+                    <p>₹20.00</p>
+                </div>
+                <div class="menu-item" data-itemid="8">
+                    <h3>Puffs</h3>
+                    <p>₹20.00</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bill-section">
+            <div id="date-time" class="date-time">Loading...</div>
+            <h2>Current Bill</h2>
+            
+            <div class="table-wrap">
+              <table class="bill-table">
+                  <thead>
+                      <tr>
+                          <th>Item</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                      </tr>
+                  </thead>
+                  <tbody id="billing">
+                      <tr>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>-</td>
+                      </tr>
+                      
+                  </tbody>
+              </table>
+            </div>
+            
+            <div id="bill-summary" class="bill-summary">
+                <div class="bill-row">
+                    <span>Subtotal:</span>
+                    <span id='subtotal'>-</span>
+                </div>
+                <div class="bill-row">
+                    <span>Tax (5%):</span>
+                    <span id='tax'>-</span>
+                </div>
+                <div class="bill-row">
+                    <span>Total:</span>
+                    <span id='total'>-</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-print" onclick="if(tot>1){ window.print();clearbill();} else alert('Please add items to PRINT BILL')">Print Bill</button>
+                <button class="btn btn-clear" onClick="clearbill()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+      let items={
+        1: {
+          "name": "Tea",
+          "price": 15.00,
+          "availability": "yes"
+        },
+        2: {
+          "name": "Special Tea",
+          "price": 25.00,
+          "availability": "no"
+        },
+        3: {
+          "name": "Black Tea",
+          "price": 20.00,
+          "availability": "yes"
+        },
+        4: {
+          "name": "Coffee",
+          "price": 20.00,
+          "availability": "yes"
+        },
+        5: {
+          "name": "Black Coffee",
+          "price": 25.00,
+          "availability": "yes"
+        },
+        6: {
+          "name": "Milk",
+          "price": 15.00,
+          "availability": "yes"
+        },
+        7: {
+          "name": "Samosa",
+          "price": 20.00,
+          "availability": 50
+        },
+        8: {
+          "name": "Puffs",
+          "price": 20.00,
+          "availability": 30
+        }
+      }
+      const og_items={...items};
+      let isFirst=true;
+      let tot = 0; //subtotal of the products added dynamically
+
+      // for adding and clearing them
+      const summary=document.getElementById('bill-summary');
+      const subtotal=summary.querySelector('#subtotal');
+      const tax=summary.querySelector('#tax');
+      const total=summary.querySelector('#total');
+
+      function addItem(itemid){
+        const billit= document.getElementById('billing')
+        const item=items[itemid];
+        item["qty"]= item["qty"]+1 || 1;
+
+        const itemtot=item.qty*item.price
+
+        const data=`<tr id="blling-${itemid}">
+                        <td>${item.name}</td>
+                        <td>${item.qty}</td>
+                        <td>${item.price}</td>
+                        <td>${itemtot}</td>
+                    </tr>`;
+        tot+=itemtot;
+
+        if (isFirst) {
+          billit.innerHTML=data
+          isFirst=false;
+        }else{
+          if(item.qty>1){
+          document.getElementById(`blling-${itemid}`).remove();
+          }
+          billit.innerHTML+=data;
+        }
+
+
+        // updating total
+        taxamt=6.5
+        subtotal.textContent=`₹${tot.toFixed(2)}`;
+        tax.textContent=`₹${taxamt.toFixed(2)}`;
+        total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
+
+      }
+
+      document.querySelectorAll('.menu-item').forEach((ele) => ele.addEventListener('click',() => addItem(ele.dataset.itemid)))
+
+      // clear btn function
+      function clearbill(){
+        items={...og_items};
+        tot=0;
+        isFirst=true;
+        document.getElementById('billing').innerHTML=`<tr>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>-</td>
+                      </tr>`;
+        subtotal.textContent="-";
+        tax.textContent="-";
+        total.textContent="-";
+      }
+
+      // for date and time
+      function getFormattedDateTime(ele) {
+        const now = new Date();
+
+        // Options for date
+        const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+        const formattedDate = now.toLocaleDateString('en-GB', dateOptions).replace(',', '');
+
+        // Options for time
+        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+        const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+
+        ele.textContent=`Date: ${formattedDate} | Time: ${formattedTime}`;
+      }
+
+      getFormattedDateTime(document.getElementById('date-time'));
+    </script>
+</body>
+</html>
