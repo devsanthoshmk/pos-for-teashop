@@ -14,7 +14,7 @@ cd pos-for-teashop
 python -m venv venv
 ```
 
-### Activate venv
+## Activate venv
 #### Command Prompt
 ``` cmd
 .\\Scripts\\activate.bat. 
