@@ -1,1 +1,9 @@
-id, item, qty, price
+name,availability,price
+Tea,,15
+Special Tea,no,25
+Black Tea,yes,20
+Coffee,yes,20
+Black Coffee,yes,25
+Milk,yes,15
+Samosa,50,20
+Puffs,30,20

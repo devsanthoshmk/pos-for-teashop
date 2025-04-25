@@ -104,7 +104,7 @@
         }
         
         .table-wrap {
-          height: 28vh;
+          height: 30vh;
           overflow-y: scroll;
         }
 
@@ -419,9 +419,9 @@
 
     <script type="text/javascript" src="/eel.js"></script>
     <script type="module">
-      let items=await eel.inventory()();
+      const items=await eel.getInventory()();
+      let qty={};
       console.log(items);
-      const og_items={...items};
       let isFirst=true;
       let tot = 0; //subtotal of the products added dynamically
 
@@ -434,13 +434,13 @@
       function addItem(itemid){
         const billit= document.getElementById('billing')
         const item=items[itemid-1];
-        item["qty"]= item["qty"]+1 || 1;
+        qty[itemid] = (qty[itemid] || 0)+1;
 
-        const itemtot=item.qty*item.price
+        const itemtot=qty[itemid]*item.price
 
         const data=`<tr id="blling-${itemid}">
                         <td>${item.name}</td>
-                        <td>${item.qty}</td>
+                        <td>${qty[itemid]}</td>
                         <td>${item.price}</td>
                         <td>${itemtot}</td>
                     </tr>`;
@@ -450,10 +450,15 @@
           billit.innerHTML=data
           isFirst=false;
         }else{
-          if(item.qty>1){
+          if(qty[itemid]>1){
           document.getElementById(`blling-${itemid}`).remove();
           }
           billit.innerHTML+=data;
+        }
+
+        // reducing the availability of an item to which can be...
+        if (item["availability"]!=="yes" && item["availability"]!=="no"){
+          item["availability"]=item["availability"]-1;
         }
 
 
@@ -462,6 +467,11 @@
         subtotal.textContent=`₹${tot.toFixed(2)}`;
         tax.textContent=`₹${taxamt.toFixed(2)}`;
         total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
+
+        // disabling the item if it is out of stock
+        if (item["availability"]===0){
+          document.getElementById(`blling-${itemid}`).style.display='none';
+        }
 
       }
 
@@ -488,14 +498,31 @@
       document.getElementById('print').addEventListener('click', () => {
         if (tot > 1) {
           window.print();
-          clearbill();
+          clearbill(true); //setting fromprnt to true to show the print success clear bill msg
+          //changing clear confirm overlay to clear after print
+            cancelbtn.textContent='Bill Print Failed!';
+            clearbtn.textContent='Bill Printed Successfully';
+            //show clear confirm overlay
+            document.getElementById('clearConfirmModal').style.display = 'flex';
+
+            cancelbtn.addEventListener('click',hideconf);
+            
+            clearbtn.addEventListener('click', ()=>{
+                // sending items to python to update inventory
+                eel.setInventory(items)();
+                //hide clear confirm overlay
+                confirmClear();
+            });
+        
+
+            
         } else {
           alert('Please add items to PRINT BILL');
         }
       });
 
-      // clear btn function
-      function clearbill(){
+      // clear confirm function utilities
+
         //btns in overlay
         const cancelbtn=document.getElementById('cancelClear')
         const clearbtn=document.getElementById('confirmClear')
@@ -517,12 +544,16 @@
             subtotal.textContent=`₹0.00`;
             tax.textContent=`₹0.00`;
             total.textContent=`₹0.00`;
-            items=og_items;
+            qty={};
             isFirst=true;
             tot=0;
             hideconf();
+            
         }
-        
+
+      // clear btn function
+      function clearbill(fromprnt=false){
+
         //show clear confirm overlay
         document.getElementById('clearConfirmModal').style.display = 'flex';
 
