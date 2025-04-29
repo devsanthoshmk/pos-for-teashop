@@ -5,6 +5,12 @@ import csv
 eel.init("web")
 
 
+@ell.expose
+def serve_pos():
+    with open("web/pos.html", "r") as f:
+        return f.read()
+
+
 @eel.expose
 def getInventory():
     file_path = "data/inventory.csv"
@@ -15,8 +21,9 @@ def getInventory():
             data.append(row)
     return data
 
+
 @eel.expose
-def setInventory(data):
+def addSales(data):
     file_path = "data/sales.csv"
     try:
         with open(file_path, mode="w", encoding="utf-8", newline="") as file:
@@ -29,9 +36,26 @@ def setInventory(data):
         print(f"Error writing to file: {e}")
         return f"Error writing to file: {e}"
 
+
+@eel.expose
+def setInventory(data):
+    file_path = "data/inventory.csv"
+    try:
+        with open(file_path, mode="w", encoding="utf-8", newline="") as file:
+            fieldnames = data[0].keys()
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"Error writing to file: {e}")
+        return f"Error writing to file: {e}"
+
+
 # Start the app with an HTML file
 eel.start(
     "index.html",
     mode="default",
     cmdline_args=["--app", "--start-fullscreen", "--browser-startup-dialog"],
+    port=1234,
 )
