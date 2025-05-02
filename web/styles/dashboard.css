@@ -211,33 +211,6 @@
         }
         
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                padding: 10px;
-            }
-            
-            .logo {
-                margin-bottom: 15px;
-            }
-            
-            .nav-menu {
-                display: flex;
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-            
-            .nav-item {
-                margin-bottom: 0;
-                margin-right: 5px;
-            }
-            
-            .nav-link {
-                padding: 8px 12px;
-            }
             
             .charts-row {
                 flex-direction: column;

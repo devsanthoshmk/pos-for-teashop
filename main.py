@@ -24,6 +24,13 @@ def serve_dashboard():
 
 
 @eel.expose
+def serve_inventory():
+    with open("web/inventory.html", "r") as f:
+        content = f.read()
+        return content
+
+
+@eel.expose
 def getInventory():
     file_path = "data/inventory.csv"
     data = []
