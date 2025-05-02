@@ -1,0 +1,58 @@
+@media print{
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+
+          /* Element | http://localhost:8000/index.html */
+
+          .menu-section {
+            display: none;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          .table-wrap {
+            overflow: unset;
+            height: unset;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          body {
+            overflow: unset;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          .action-buttons {
+            display: none;
+          }
+
+          /* Element | http://localhost:8000/index.html */
+
+          #bill-summary {
+            box-shadow: 0 0 0;
+          }
+
+          .nav-menu{
+            display: none !important;
+          }
+
+          .logo{
+            color:var(--primary);
+          }
+
+          .bill-section{
+            height: unset;
+          }
+
+        }

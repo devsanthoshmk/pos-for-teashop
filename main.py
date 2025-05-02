@@ -1,14 +1,26 @@
 import eel
 import csv
+import os
 
 # Set web folder
 eel.init("web")
+with open("web/pos.html", "r") as f:
+    content = f.read()
+    print(content)
 
 
-@ell.expose
+@eel.expose
 def serve_pos():
     with open("web/pos.html", "r") as f:
-        return f.read()
+        content = f.read()
+        return content
+
+
+@eel.expose
+def serve_dashboard():
+    with open("web/dashboard.html", "r") as f:
+        content = f.read()
+        return content
 
 
 @eel.expose
@@ -23,13 +35,38 @@ def getInventory():
 
 
 @eel.expose
+def getSales():
+    file_path = "data/sales.csv"
+    data = []
+    with open(file_path, mode="r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            data.append(row)
+    return data
+
+
+@eel.expose
 def addSales(data):
     file_path = "data/sales.csv"
     try:
-        with open(file_path, mode="w", encoding="utf-8", newline="") as file:
+        write_header = not os.path.exists(file_path) or os.path.getsize(file_path) == 0
+        with open(file_path, mode="a", encoding="utf-8", newline="") as file:
             fieldnames = data[0].keys()
+            fieldnames = [
+                "id",
+                "date",
+                "time",
+                "item",
+                "quantity",
+                "price",
+                "total",
+                "subtotal",
+                "tax",
+                "grandtotal",
+            ]
             writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
+            if write_header:
+                writer.writeheader()
             writer.writerows(data)
         return True
     except Exception as e:
