@@ -11,7 +11,7 @@ const inventoryData = [
 ];
 
 // Update date and time
-function updateDateTime() {
+function inventupdateDateTime() {
     const now = new Date();
     const options = { 
         weekday: 'long', 
@@ -135,18 +135,28 @@ function addInventoryItem() {
     inventoryList.parentElement.scrollTop = inventoryList.parentElement.scrollHeight;
 }
 
-// Event listeners
-addItemBtn.addEventListener('click', addInventoryItem);
+
+let inventoryList;
+let addItemBtn;
+let dateTimeElement;
+
 
 function globals_inventory(){
      // DOM elements
-    const inventoryList = document.getElementById('inventoryList');
-    const addItemBtn = document.getElementById('addItemBtn');
-    const dateTimeElement = document.getElementById('date-time');
+    inventoryList = document.getElementById('inventoryList');
+    addItemBtn = document.getElementById('addItemBtn');
+    dateTimeElement = document.getElementById('date-time');
+
+    // Event listeners
+    addItemBtn.addEventListener('click', addInventoryItem);
+
+
     // Initialize date/time
-    updateDateTime();
+    inventupdateDateTime();
     setInterval(updateDateTime, 60000); // Update every minute
 
+
+    // Initial render
+    renderInventory();
+
 }
-// Initial render
-renderInventory();
