@@ -1,47 +1,47 @@
 <!-- Main Content -->
-
+<div class="dashboard-main">
     <h1 class="page-title">Sales Dashboard</h1>
     
     <!-- Statistics Cards -->
     <div class="stats-container">
         <div class="stat-card">
             <div class="stat-title">Daily Average</div>
-            <div class="stat-value">₹1,254</div>
+            <div id="dailyavg" class="stat-value">₹1,254</div>
             <div class="stat-trend trend-up">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
                 </svg>
-                8.2% from last week
+                <span id="dailyper">8.2% from last week</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-title">Weekly Average</div>
-            <div class="stat-value">₹8,765</div>
+            <div id="weeklyavg" class="stat-value">₹8,765</div>
             <div class="stat-trend trend-up">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
                 </svg>
-                5.3% from last month
+                <span id="weeklyper">5.3% from last month</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-title">Monthly Average</div>
-            <div class="stat-value">₹32,450</div>
+            <div id="monthlyavg" class="stat-value">₹32,450</div>
             <div class="stat-trend trend-down">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
+                    <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
                 </svg>
-                2.1% from last quarter
+                <span id="monthlyper">2.1% from last quarter</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-title">Total Sales</div>
-            <div class="stat-value">₹389,750</div>
+            <div id="totalavg" class="stat-value">₹389,750</div>
             <div class="stat-trend trend-up">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
                 </svg>
-                12.5% from last year
+                <span id="totper">12.5% from last year</span>
             </div>
         </div>
     </div>
@@ -106,3 +106,5 @@
     <p class="responsive-info">This dashboard is fully responsive and adapts to all screen sizes.</p>
     
 
+
+</div>

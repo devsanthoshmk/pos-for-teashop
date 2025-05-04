@@ -2,6 +2,9 @@
         .main-content {
             flex: 1;
             padding: 20px;
+        }
+
+        .dashboard-main{
             overflow-y: auto;
         }
         
@@ -226,4 +229,11 @@
         canvas {
             width: 100% !important;
             height: 90% !important;
+        }
+
+        .stat-trend svg {
+          transition: transform 0.2s ease;
+        }
+        .stat-trend.trend-down svg {
+          transform: rotate(180deg);
         }

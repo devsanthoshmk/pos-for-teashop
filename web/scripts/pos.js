@@ -40,6 +40,7 @@ function addItem(ele){
                   <td>${qty[itemid]}</td>
                   <td>${item.price}</td>
                   <td>${itemtot}</td>
+                  <td><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
   tot+=itemtot;
 
@@ -56,11 +57,16 @@ function addItem(ele){
   // reducing the availability of an item which can be...
   if (item["availability"]!=="yes" && item["availability"]!=="no"){
     item["availability"]=item["availability"]-1+"";
-    availability(ele);
+    if (item["availability"]+0>0){
+      availability(ele);
+    } else{
+      ele.classList.add("menu-item-disabled")
+      ele.classList.remove("menu-item")
+    }
   }
 
   // updating total
-  const taxamt=6.5
+  taxamt=6.5
   subtotal.textContent=`₹${tot.toFixed(2)}`;
   tax.textContent=`₹${taxamt.toFixed(2)}`;
   total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
@@ -70,7 +76,7 @@ function addItem(ele){
     document.getElementById(`blling-${itemid}`).style.display='none';
   }
 
-  console.log(getDateTime());
+  // console.log(getDateTime());
   const [date,time] = getDateTime();
       // subtotal,tax,grandtotal
   let done;
@@ -85,8 +91,60 @@ function addItem(ele){
     sale.push({"item":item.name,"quantity":qty[itemid],"price":item.price,"total":itemtot,"subtotal":tot.toFixed(2),"tax":taxamt.toFixed(2),"grandtotal":(tot+taxamt).toFixed(2)});
     // console.log(sale)
   }
+  console.log(sale)
 
 
+}
+
+function removeItem(ele){
+  const itemid=ele.dataset.itemid;
+  const item=items[itemid-1];
+  qty[itemid]-=1;
+  const itemtot=qty[itemid]*item.price;
+
+  const data=`<tr id="blling-${itemid}">
+                  <td>${item.name}</td>
+                  <td>${qty[itemid]}</td>
+                  <td>${item.price}</td>
+                  <td>${itemtot}</td>
+                  <td><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
+              </tr>`;
+
+  tot-=item.price;
+
+
+  subtotal.textContent=`₹${tot.toFixed(2)}`;
+  tax.textContent=`₹${taxamt.toFixed(2)}`;
+  total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
+
+  let noneed;
+  for (let i = sale.length - 1; i >= 0; i--) {
+    const sal = sale[i];
+    if (sal.item === item.name) {
+      sal.quantity -= 1;
+      sal.total -= itemtot;
+      if (sal.quantity === 0) {
+        sale.splice(i, 1); // safely remove item
+        noneed=true;
+        break
+      }
+    }
+  }
+  console.log(sale);
+  if(noneed!==true){
+    ele.parentElement.parentElement.innerHTML = data;
+  } else if (sale.length===0){
+    isFirst=true;
+    ele.parentElement.parentElement.innerHTML= `<tr>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                  </tr>`;
+  }else {
+    ele.parentElement.parentElement.remove();
+  }
 }
 
 
@@ -175,6 +233,7 @@ function printHandle(){
                                                       <td>-</td>
                                                       <td>-</td>
                                                       <td>-</td>
+                                                      <td>-</td>
                                                   </tr>`;
       subtotal.textContent=`₹0.00`;
       tax.textContent=`₹0.00`;
@@ -224,6 +283,8 @@ function clearbill(fromprnt=false){
   let salesid;
 
   let first=true;
+
+  let taxamt;
 
   async function globals_pos() {
       console.time("avil");

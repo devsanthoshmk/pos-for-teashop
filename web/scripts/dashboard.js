@@ -1,14 +1,19 @@
 // Calculate statistics
 function calculateStats(data) {
     // Group by date
+    let prev_id=0; //to get only the grand tot once for an id since .csv is structured in that way
     const dailySales = {};
     data.forEach(row => {
         const date = row.date;
         if (!dailySales[date]) {
             dailySales[date] = 0;
         }
-        dailySales[date] += parseFloat(row.grandtotal);
+        if (prev_id !==row.id){
+            dailySales[date] += parseFloat(row.grandtotal);
+            prev_id=row.id;
+        }
     });
+    // console.log(dailySales)
 
     // Get unique dates and sort them
     const dates = Object.keys(dailySales).sort((a, b) => {
@@ -22,6 +27,8 @@ function calculateStats(data) {
         date,
         sales: dailySales[date]
     }));
+
+    // console.log(dailySalesArray)
 
     // Product performance
     const products = {};
@@ -49,8 +56,9 @@ function calculateStats(data) {
     
     // Add percentage to product performance
     productPerformance.forEach(product => {
-        product.percentage = (product.revenue / totalRevenue) * 100;
+        product.percentage = parseFloat(((product.revenue / totalRevenue) * 100).toFixed(2));
     });
+    // console.log(productPerformance)
 
     return {
         dailySales: dailySalesArray,
@@ -58,20 +66,95 @@ function calculateStats(data) {
     };
 }
 
+// calcWeek helper
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+function Zellercongruence(dateStr) {
+    let [day, month, year] =dateStr.split("-").map(x => parseInt(x, 10));
+    if (month < 3) {
+        month += 12;
+        year -= 1;
+    }
+    let c = Math.floor(year / 100);
+    year = year % 100;
+    let h = (c / 4 - 2 * c + year + year / 4 + 13 * (month + 1) / 5 + day - 1) % 7;
+    return parseInt((h + 7) % 7);
+}
+
+function addDays(dateStr, n) {
+    const [day, month, year] = dateStr.split("-").map(x => parseInt(x, 10));
+
+    const date = new Date(year, month - 1, day);
+
+    date.setDate(date.getDate() + n);
+
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const formatted = date.toLocaleDateString('en-GB', options); 
+    return formatted.replace(/\//g, "-");
+}
+
+
+
+function calcWeeks(){
+    const first_date = stats.dailySales.at(0).date;
+    const dayind=Zellercongruence(first_date);
+    const satin=7-dayind-1;
+
+    const weekly_sales={};
+    let w=1;
+    let next_date=addDays(first_date,satin);
+    for (data of stats.dailySales){
+        const week=`week-${w}`;
+        const date=data.date;
+        if (!weekly_sales[week]){
+            weekly_sales[week]=0;
+        }
+
+        if(parseInt(date.split("-").reverse().join(""))<parseInt(next_date.split("-").reverse().join(""))){
+            weekly_sales[week] += data.sales;
+
+        } else{
+            w+=1
+            next_date=addDays(date,7);
+            weekly_sales[`week-${w}`] = data.sales;
+        }
+
+    }
+
+    return weekly_sales
+}
+
+function calcMonth(){
+    const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+   const monthly={};
+
+   stats.dailySales.forEach(data=>{
+    const mon=months[parseInt(data.date.split("-")[1],10)-1];
+    if (!monthly[mon]){
+        monthly[mon]=0;
+    }
+    monthly[mon]+=data.sales;
+   })
+   // console.log(monthly)
+
+   return monthly
+}
+
 function updateChartByRange(range) {
-        // In a real application, this would filter data based on the range
-        // For demo, we'll just update the chart title
         const chartTitle = document.querySelector('.chart-container .chart-title');
         chartTitle.textContent = `Sales Trend (${range.charAt(0).toUpperCase() + range.slice(1)})`;
         
         // Mock data transformation (in real app, would actually filter data)
         // Here we're just making visual changes to simulate functionality
         if (range === 'weekly') {
-            salesChart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            salesChart.data.datasets[0].data = [350, 425, 380, 450];
+            const weekly_sales=calcWeeks();
+            console.log(weekly_sales)
+            salesChart.data.labels = Object.keys(weekly_sales);
+            salesChart.data.datasets[0].data = Object.values(weekly_sales);
         } else if (range === 'monthly') {
-            salesChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr'];
-            salesChart.data.datasets[0].data = [1200, 1350, 1450, 1550];
+            monthly_sales=calcMonth()
+            console.log(monthly_sales)
+            salesChart.data.labels = Object.keys(monthly_sales);
+            salesChart.data.datasets[0].data = Object.values(monthly_sales);
         } else {
             // Reset to daily
             salesChart.data.labels = stats.dailySales.map(day => day.date);
@@ -82,6 +165,75 @@ function updateChartByRange(range) {
     }
 
 
+function updateStates(){
+    // ---------- your raw data ----------
+    const dailyData = stats.dailySales;
+
+    const weeklyData = calcWeeks();
+
+    const monthlyData = calcMonth();
+
+    const lastYearTotal = 0; // replace with your actual last-year total
+
+     // ─── helpers ────────────────────────────────────────────────────────
+    const sum      = arr => arr.reduce((a, b) => a + b, 0);
+    const avg      = arr => arr.length ? sum(arr) / arr.length : 0;
+    const pctChange= (cur, prev) => prev === 0 ? 0 : (cur - prev) / prev * 100;
+    const fmtINR   = val => new Intl.NumberFormat('en-IN', {
+      style: 'currency', currency: 'INR', maximumFractionDigits: 0
+    }).format(val);
+
+    // ─── 1. DAILY AVERAGE & % vs. previous week ─────────────────────────
+    const dailySales   = dailyData.map(d => d.sales);
+    const dailyAvg     = avg(dailySales);
+    const last7        = dailySales.slice(-7);
+    const prev7        = dailySales.slice(-14, -7);
+    const prev7Avg     = avg(prev7.length ? prev7 : last7);
+    const dailyPct     = pctChange(dailyAvg, prev7Avg);
+
+    // ─── 2. WEEKLY AVERAGE & % vs. previous month-of-weeks ───────────────
+    const weekVals     = Object.values(weeklyData);
+    const weeklyAvg    = avg(weekVals);
+    const prevWeeks    = weekVals.slice(0, -1);
+    const prevWeeksAvg = avg(prevWeeks);
+    const weeklyPct    = pctChange(weeklyAvg, prevWeeksAvg);
+
+    // ─── 3. MONTHLY AVERAGE & % vs. previous quarter ────────────────────
+    const monthVals      = Object.values(monthlyData);
+    const monthlyAvg     = avg(monthVals);
+    const qVals          = monthVals.slice(Math.max(0, monthVals.length-4), monthVals.length-1);
+    const prevQuarterAvg = avg(qVals);
+    const monthlyPct     = pctChange(monthlyAvg, prevQuarterAvg);
+
+    // ─── 4. TOTAL SALES & % vs. last year ────────────────────────────────
+    const totalSales     = sum(dailySales);
+    const totalPct       = pctChange(totalSales, lastYearTotal);
+
+    // ─── inject into DOM ─────────────────────────────────────────────────
+    const setStat = (idVal, idPct, value, pct) => {
+      document.getElementById(idVal).textContent = fmtINR(value);
+      const pctEl = document.getElementById(idPct);
+      pctEl.textContent = `${pct.toFixed(1)}% from last ${{
+        daily: 'week',
+        weekly: 'month',
+        monthly: 'quarter',
+        total: 'year'
+      }[idVal.replace('avg','')]}`;
+      // toggle trend arrow
+      const trendDiv = pctEl.closest('.stat-trend');
+      trendDiv.classList.toggle('trend-up', pct >= 0);
+      trendDiv.classList.toggle('trend-down', pct < 0);
+    };
+
+    setStat('dailyavg','dailyper',   dailyAvg,   dailyPct);
+    setStat('weeklyavg','weeklyper', weeklyAvg,  weeklyPct);
+    setStat('monthlyavg','monthlyper',monthlyAvg, monthlyPct);
+    setStat('totalavg','totper',     totalSales, totalPct);
+
+
+}
+
+
 // Color palette for charts
 const colors = [
     '#5b3e29', '#8c6e5a', '#e6ccb3', '#f9f3ed', 
@@ -90,14 +242,14 @@ const colors = [
 ];
 
 
-let salesData,salesCtx,salesChart,productsCtx,productsChart;
+let salesData,salesCtx,salesChart,productsCtx,productsChart,stats;
 
 
 // Initialize Charts
 async function load_dashboard() {
-    const salesData = Object.values(sales);  //reusing sales data from pos.js
+    salesData = Object.values(sales);  //reusing sales data from pos.js
     console.log(Object.values(salesData)); 
-    const stats = calculateStats(salesData);
+    stats = calculateStats(salesData);
 
     // Sales Trend Chart
     salesCtx = document.getElementById('salesChart').getContext('2d');
@@ -144,6 +296,7 @@ async function load_dashboard() {
         }
     });
 
+
     // Best Selling Products Chart
     productsCtx = document.getElementById('productsChart').getContext('2d');
     productsChart = new Chart(productsCtx, {
@@ -155,13 +308,6 @@ async function load_dashboard() {
                 backgroundColor: colors.slice(0, stats.productPerformance.length),
                 borderWidth: 1
             }]
-
-
-
-
-
-
-
         },
         options: {
             responsive: true,
