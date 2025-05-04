@@ -142,6 +142,7 @@ let dateTimeElement;
 
 
 function globals_inventory(){
+    console.log(items);
      // DOM elements
     inventoryList = document.getElementById('inventoryList');
     addItemBtn = document.getElementById('addItemBtn');

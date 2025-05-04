@@ -1,11 +1,11 @@
- .main-content {
+/* .main-content {
     flex: 1;
     padding: 20px;
     display: flex;
     flex-direction: column;
     max-width: 80vw;
     margin: auto;
-}
+}*/
 
 .inventory-section {
     background-color: white;
@@ -46,12 +46,12 @@ h2 {
     padding: 8px 16px;
 }
 
-.btn-add:hover {
+.add-btn-add:hover {
     opacity: 0.9;
     transform: translateY(-2px);
 }
 
-.table-wrap {
+.inventory-table-wrap {
     height: 75vh;
     overflow-y: auto;
 }

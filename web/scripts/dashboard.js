@@ -58,6 +58,29 @@ function calculateStats(data) {
     };
 }
 
+function updateChartByRange(range) {
+        // In a real application, this would filter data based on the range
+        // For demo, we'll just update the chart title
+        const chartTitle = document.querySelector('.chart-container .chart-title');
+        chartTitle.textContent = `Sales Trend (${range.charAt(0).toUpperCase() + range.slice(1)})`;
+        
+        // Mock data transformation (in real app, would actually filter data)
+        // Here we're just making visual changes to simulate functionality
+        if (range === 'weekly') {
+            salesChart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            salesChart.data.datasets[0].data = [350, 425, 380, 450];
+        } else if (range === 'monthly') {
+            salesChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr'];
+            salesChart.data.datasets[0].data = [1200, 1350, 1450, 1550];
+        } else {
+            // Reset to daily
+            salesChart.data.labels = stats.dailySales.map(day => day.date);
+            salesChart.data.datasets[0].data = stats.dailySales.map(day => day.sales);
+        }
+        
+        salesChart.update();
+    }
+
 
 // Color palette for charts
 const colors = [
@@ -66,14 +89,19 @@ const colors = [
     '#b08968', '#dda15e', '#606c38', '#283618'
 ];
 
+
+let salesData,salesCtx,salesChart,productsCtx,productsChart;
+
+
 // Initialize Charts
 async function load_dashboard() {
-    const salesData = await eel.getSales()();
+    const salesData = Object.values(sales);  //reusing sales data from pos.js
+    console.log(Object.values(salesData)); 
     const stats = calculateStats(salesData);
 
     // Sales Trend Chart
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    const salesChart = new Chart(salesCtx, {
+    salesCtx = document.getElementById('salesChart').getContext('2d');
+    salesChart = new Chart(salesCtx, {
         type: 'line',
         data: {
             labels: stats.dailySales.map(day => day.date),
@@ -117,8 +145,8 @@ async function load_dashboard() {
     });
 
     // Best Selling Products Chart
-    const productsCtx = document.getElementById('productsChart').getContext('2d');
-    const productsChart = new Chart(productsCtx, {
+    productsCtx = document.getElementById('productsChart').getContext('2d');
+    productsChart = new Chart(productsCtx, {
         type: 'doughnut',
         data: {
             labels: stats.productPerformance.map(product => product.name),
@@ -237,28 +265,7 @@ async function load_dashboard() {
         });
     });
 
-    function updateChartByRange(range) {
-        // In a real application, this would filter data based on the range
-        // For demo, we'll just update the chart title
-        const chartTitle = document.querySelector('.chart-container .chart-title');
-        chartTitle.textContent = `Sales Trend (${range.charAt(0).toUpperCase() + range.slice(1)})`;
-        
-        // Mock data transformation (in real app, would actually filter data)
-        // Here we're just making visual changes to simulate functionality
-        if (range === 'weekly') {
-            salesChart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            salesChart.data.datasets[0].data = [350, 425, 380, 450];
-        } else if (range === 'monthly') {
-            salesChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr'];
-            salesChart.data.datasets[0].data = [1200, 1350, 1450, 1550];
-        } else {
-            // Reset to daily
-            salesChart.data.labels = stats.dailySales.map(day => day.date);
-            salesChart.data.datasets[0].data = stats.dailySales.map(day => day.sales);
-        }
-        
-        salesChart.update();
-    }
+    
 
     // Export button functionality
     const exportBtn = document.querySelector('.export-btn');

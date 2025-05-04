@@ -16,8 +16,8 @@
             display: flex;
             max-width: 80vw;
             margin: auto;
-            gap: 20px;
-            padding-left: 10px;
+            gap: 11px;
+            /*            padding-left: 10px;*/
         }
         
         header {
@@ -304,3 +304,7 @@
                 width: 55vw;
             }
           }
+
+
+
+/*          testing*/

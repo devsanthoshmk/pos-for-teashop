@@ -1,58 +1,86 @@
 @media print{
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                padding: 10px;
-            }
-            
-            .logo {
-                margin-bottom: 15px;
-            }
+  body {
+      flex-direction: column;
+  }
+  
+  .sidebar {
+      width: 100%;
+      padding: 10px;
+  }
+  
+  .logo {
+      margin-bottom: 15px;
+  }
 
-          /* Element | http://localhost:8000/index.html */
+  /* Element | http://localhost:8000/index.html */
 
-          .menu-section {
-            display: none;
-          }
+  .menu-section {
+    display: none;
+  }
 
-          /* Element | http://localhost:8000/index.html */
+  /* Element | http://localhost:8000/index.html */
 
-          .table-wrap {
-            overflow: unset;
-            height: unset;
-          }
+  .table-wrap {
+    overflow: unset;
+    height: unset;
+  }
 
-          /* Element | http://localhost:8000/index.html */
+  /* Element | http://localhost:8000/index.html */
 
-          body {
-            overflow: unset;
-          }
+  body {
+    overflow: unset;
+  }
 
-          /* Element | http://localhost:8000/index.html */
+  /* Element | http://localhost:8000/index.html */
 
-          .action-buttons {
-            display: none;
-          }
+  .action-buttons {
+    display: none;
+  }
 
-          /* Element | http://localhost:8000/index.html */
+  /* Element | http://localhost:8000/index.html */
 
-          #bill-summary {
-            box-shadow: 0 0 0;
-          }
+  #bill-summary {
+    box-shadow: 0 0 0;
+  }
 
-          .nav-menu{
-            display: none !important;
-          }
+  .nav-menu{
+    display: none !important;
+  }
 
-          .logo{
-            color:var(--primary);
-          }
+  .logo{
+    color:var(--primary);
+  }
 
-          .bill-section{
-            height: unset;
-          }
+  .bill-section{
+    height: unset;
+  }
+  .btn-print{
+    display: none;
+  }
 
-        }
+  .print-hide{
+    display:none;
+  }
+
+  #date-time {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* aligns spans to the right */
+    width: 20vw;
+    margin-left: auto; /* pushes container to the right */
+  }
+
+  #date-time span:nth-child(2){
+    display: none;
+  }
+  #date-time span {
+    display: block;
+    width: fit-content;
+  }
+
+  #date-time div{
+    position: absolute;
+  }
+
+
+}

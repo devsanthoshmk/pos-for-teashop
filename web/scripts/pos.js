@@ -106,7 +106,7 @@ function updateDateTime(ele) {
       // e.g. "12:39 AM"
       const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
 
-      ele.textContent = `Date: ${formattedDate} | Time: ${formattedTime}`;
+      ele.innerHTML = `<div><span>Date: ${formattedDate}</span><span> | </span><span>Time: ${formattedTime}</span></div>`;
 
       // Schedule next update right at the top of the next second
       const secLeft = 60 -  now.getSeconds();
@@ -150,7 +150,7 @@ function printHandle(){
       sal.grandtotal=grandtotal;
     });
 
-    // sending items to python to update inventory
+    // sending items to python to update inventory and sales
     eel.setInventory(items)();
     eel.addSales(sale);
     //hide clear confirm overlay
@@ -223,10 +223,16 @@ function clearbill(fromprnt=false){
   let sales; 
   let salesid;
 
+  let first=true;
+
   async function globals_pos() {
       console.time("avil");
-      items = await eel.getInventory()();
-      sales = await eel.getSales()();
+
+      if (first===true){
+        items = await eel.getInventory()();
+        sales = await eel.getSales()();
+        first=false;
+      }
       salesid=sales.at(-1).id;
       console.log(sales.at(-1).id);
       // console.log(items);

@@ -65,16 +65,34 @@
 
     <script type="text/javascript">
         async function fetchData(to){
+            const first_serve={"1":true,"2":true,"3":true};
+            let pos,dashboard,inventory;
+
             let content;
             let func;
             if (to==="1"){
-                content = await eel.serve_dashboard()()
+                if (first_serve[1]===true){
+                    content = await eel.serve_dashboard()()
+                    dashboard=content
+                } else {
+                    content=dashboard
+                }
                     func=load_dashboard;
             } else if(to==="2"){
-                content = await eel.serve_pos()()
-                    func=globals_pos;
+                if (first_serve[2]===true){
+                    content = await eel.serve_pos()()
+                    pos=content
+                } else {
+                    content=pos
+                }
+                func=globals_pos;
             } else if(to==="3"){
-                content = await eel.serve_inventory()()
+                if (first_serve[3]===true){
+                    content = await eel.serve_inventory()()
+                    inventory=content
+                } else {
+                    content=inventory
+                }
                 func=globals_inventory;
 
             }
@@ -89,9 +107,7 @@
             // console.log(content,"func\n",func)
             document.getElementById("main").innerHTML=content
             if (func)
-                setTimeout(() => {
-                func();
-                }, 2000); // 2000 milliseconds = 2 seconds
+                func();  // 2000 milliseconds = 2 seconds
             document.querySelector('ul a.nav-link.active').classList.remove('active');
             ele.classList.add("active");
         });
