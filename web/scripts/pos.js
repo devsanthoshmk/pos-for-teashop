@@ -3,6 +3,14 @@ function isNumber(str) {
     return !isNaN(str) && str.trim() !== '';
   }
 
+//showing availability dynamically using js
+function availability(ele){
+  const avail=ele.querySelector('h3 span');
+  avail.innerHTML=isNumber(items[ele.dataset.itemid-1].availability) ? `(${items[ele.dataset.itemid-1].availability})` : "";
+  // console.log(isNumber(items[ele.dataset.itemid-1].availability),items[ele.dataset.itemid-1].availability);
+}
+
+
 // for adding to sales
 function getDateTime() {
   const now = new Date();
@@ -18,12 +26,22 @@ function getDateTime() {
 }
 
 
-
-
 function addItem(ele){
   const itemid=ele.dataset.itemid
   const billit= document.getElementById('billing')
   const item=items[itemid-1];
+  // reducing the availability of an item which can be...
+  if (item["availability"]!=="yes" && item["availability"]!=="no"){
+    if (item["availability"]-0>0){
+    item["availability"]=item["availability"]-1+"";
+      availability(ele);
+    } else{
+      availability(ele);
+      ele.classList.add("menu-item-disabled")
+      ele.classList.remove("menu-item")
+      return 
+    }
+  }
   qty[itemid] = (qty[itemid] || 0)+1;
 
   const itemtot=qty[itemid]*item.price
@@ -47,27 +65,11 @@ function addItem(ele){
     billit.innerHTML+=data;
   }
 
-  // reducing the availability of an item which can be...
-  if (item["availability"]!=="yes" && item["availability"]!=="no"){
-    item["availability"]=item["availability"]-1+"";
-    if (item["availability"]+0>0){
-      availability(ele);
-    } else{
-      ele.classList.add("menu-item-disabled")
-      ele.classList.remove("menu-item")
-    }
-  }
-
   // updating total
   taxamt=6.5
   subtotal.textContent=`₹${tot.toFixed(2)}`;
   tax.textContent=`₹${taxamt.toFixed(2)}`;
   total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
-
-  // disabling the item if it is out of stock
-  if (item["availability"]===0){
-    document.getElementById(`blling-${itemid}`).style.display='none';
-  }
 
   // console.log(getDateTime());
   const [date,time] = getDateTime();
@@ -84,7 +86,7 @@ function addItem(ele){
     sale.push({"item":item.name,"quantity":qty[itemid],"price":item.price,"total":itemtot,"subtotal":tot.toFixed(2),"tax":taxamt.toFixed(2),"grandtotal":(tot+taxamt).toFixed(2)});
     // console.log(sale)
   }
-  console.log(sale)
+  // console.log(sale)
 
 
 }
@@ -110,6 +112,16 @@ function removeItem(ele){
   tax.textContent=`₹${taxamt.toFixed(2)}`;
   total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
 
+  if (item["availability"]!=="yes" && item["availability"]!=="no"){
+    item.availability=  item.availability-0+1+''; 
+    const bele = document.querySelector(`[data-itemid="${itemid}"].menu-item, [data-itemid="${itemid}"].menu-item-disabled`);
+    if (item.availability-0===1){
+      bele.classList.add("menu-item")
+      bele.classList.remove("menu-item-disabled")
+    }
+    availability(bele);
+  }
+
   let noneed;
   for (let i = sale.length - 1; i >= 0; i--) {
     const sal = sale[i];
@@ -123,7 +135,7 @@ function removeItem(ele){
       }
     }
   }
-  console.log(sale);
+  // console.log(sale);
   if(noneed!==true){
     ele.parentElement.parentElement.innerHTML = data;
   } else if (sale.length===0){
@@ -258,6 +270,23 @@ function clearbill(fromprnt=false){
   }
 }
 
+function renderMenu(){
+  //adding inventory item to menu
+  const menucont=document.getElementById('menu-container');
+  let items_id=0;
+  for (item of items){
+    items_id+=1;
+    avail=isNumber(item.availability) ? `(${item.availability})` : "";
+    if(item.availability==='yes'||item.availability>0){
+      const menu_item=`<div class="menu-item" data-itemid="${items_id}" >
+                          <h3>${item.name}<span title="Availability">${avail}</span></h3>
+                          <p>₹${item.price}</p>
+                      </div>`;
+      menucont.innerHTML+=menu_item;
+    }
+  }
+}
+
 
   // MAIN FUNC CALLED AS ROOT
   let items;
@@ -296,21 +325,8 @@ function clearbill(fromprnt=false){
       salesid=sales.at(-1).id;
       // console.log(sales.at(-1).id);
       // console.log(items);
+      renderMenu();
 
-      //adding inventory item to menu
-      const menucont=document.getElementById('menu-container');
-      let items_id=0;
-      for (item of items){
-        items_id+=1;
-        avail=isNumber(item.availability) ? `(${item.availability})` : "";
-        if(item.availability==='yes'||item.availability>0){
-          const menu_item=`<div class="menu-item" data-itemid="${items_id}" >
-                              <h3>${item.name}<span title="Availability">${avail}</span></h3>
-                              <p>₹${item.price}</p>
-                          </div>`;
-          menucont.innerHTML+=menu_item;
-        }
-      }
 
       // showing availability
       // document.querySelectorAll('.menu-item').forEach((ele) => availability(ele));
