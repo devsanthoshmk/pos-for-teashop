@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/styles/dashboard.css">        
     <link rel="stylesheet" type="text/css" href="/styles/pos_print.css">
     <link rel="stylesheet" type="text/css" href="/styles/inventory.css">
+    <link rel="stylesheet" type="text/css" href="/styles/settings.css">
 
 </head>
 <body>
@@ -45,7 +46,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link">
+                <a id="4" class="nav-link" onclick="csrit(this)">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -76,18 +77,19 @@
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript" src="/scripts/pos.js"></script>
     <script type="text/javascript" src="/scripts/inventory.js"></script>
+    <script type="text/javascript" src="/scripts/settings.js"></script>
 
     <script type="text/javascript">
         let to;
         async function fetchData(to){
-            const first_serve={"1":true,"2":true,"3":true};
-            let pos,dashboard,inventory;
+            const first_serve={"1":true,"2":true,"3":true,"4":true};
+            let pos,dashboard,inventory,settings;
 
             let content;
             let func;
             if (to==="1"){
                 if (first_serve[1]===true){
-                    content = await eel.serve_dashboard()()
+                    content = await eel.serve("dashboard")()
                     dashboard=content
                 } else {
                     content=dashboard
@@ -95,7 +97,7 @@
                     func=load_dashboard;
             } else if(to==="2"){
                 if (first_serve[2]===true){
-                    content = await eel.serve_pos()()
+                    content = await eel.serve("pos")()
                     pos=content
                 } else {
                     content=pos
@@ -103,34 +105,70 @@
                 func=globals_pos;
             } else if(to==="3"){
                 if (first_serve[3]===true){
-                    content = await eel.serve_inventory()()
+                    content = await eel.serve("inventory")()
                     inventory=content
                 } else {
                     content=inventory
                 }
                 func=globals_inventory;
 
+            } else if(to==="4"){
+                if (first_serve[4]===true){
+                    content = await eel.serve("settings")()
+                    settings=content
+                } else {
+                    content=settings
+                }
+                func=settings_globals;
             }
             // console.log(content,func,times_visit[2])
             return {content,func}
         }
+        function main(ele){
+            to = ele.id
+            fetchData(to)
+            .then( ({content,func}) =>{
+                // console.log(content,"func\n",func)
+                document.getElementById("main").innerHTML=content
+                if (func)
+                    func(); 
+                document.querySelector('ul a.nav-link.active').classList.remove('active');
+                ele.classList.add("active");
+            });
+        }
        function csrit(ele){
-        // console.log(ele);
-        to = ele.id
-        fetchData(to)
-        .then( ({content,func}) =>{
-            // console.log(content,"func\n",func)
-            document.getElementById("main").innerHTML=content
-            if (func)
-                func();  // 2000 milliseconds = 2 seconds
-            document.querySelector('ul a.nav-link.active').classList.remove('active');
-            ele.classList.add("active");
-        });
+        if (ask_save===true){
+            ask_save=false;
+            overlay = document.getElementById('clearConfirmModal');
+            cancelbtn = document.getElementById('cancelClear');
+            clearbtn = document.getElementById('confirmClear');
+            saving(true);
 
+            clearbtn.onclick=function(){
+
+                overlay.style.display="none";
+                // console.log(ele);
+                main(ele)            
+
+            }
+
+            cancelbtn.onclick=function(){
+                overlay.style.display="none";
+
+            }
+        } else{
+            main(ele)
+        }
+
+        
        }
-       let ask_saved;
+       let ask_save=false;
+       let settings;
+       eel.getSettings()().then((data)=>{
+        settings=data;
        const el=document.getElementById('2')
        csrit(el);
+       })
 
     </script>
 

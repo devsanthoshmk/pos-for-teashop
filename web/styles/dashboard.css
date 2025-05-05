@@ -6,6 +6,7 @@
 
         .dashboard-main{
             overflow-y: auto;
+            padding-left: 15px ;
         }
         
         .page-title {

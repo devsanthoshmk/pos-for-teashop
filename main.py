@@ -1,31 +1,22 @@
 import eel
 import csv
+import json
 import os
+import platform
+import subprocess
+import io
+
+inventory_path = "data/inventory.csv"
+settings_path = "data/settings.json"
+
 
 # Set web folder
 eel.init("web")
-with open("web/pos.html", "r") as f:
-    content = f.read()
-    print(content)
 
 
 @eel.expose
-def serve_pos():
-    with open("web/pos.html", "r") as f:
-        content = f.read()
-        return content
-
-
-@eel.expose
-def serve_dashboard():
-    with open("web/dashboard.html", "r") as f:
-        content = f.read()
-        return content
-
-
-@eel.expose
-def serve_inventory():
-    with open("web/inventory.html", "r") as f:
+def serve(html):
+    with open(f"web/{html}.html", "r") as f:
         content = f.read()
         return content
 
@@ -94,6 +85,79 @@ def setInventory(data):
     except Exception as e:
         print(f"Error writing to file: {e}")
         return f"Error writing to file: {e}"
+
+
+@eel.expose
+def getSettings():
+    with open(settings_path, mode="r", encoding="utf-8") as file:
+        settings = json.load(file)
+    return settings
+
+
+@eel.expose
+def openData(file):
+    file_path = "data/inventory.csv" if file == "inventory" else "data/sales.csv"
+    if platform.system() == "Windows":
+        os.startfile(file_path)
+    elif platform.system() == "Darwin":  # macOS
+        subprocess.Popen(["open", file_path])
+    else:  # Linux and others
+        subprocess.Popen(["xdg-open", file_path])
+
+
+@eel.expose
+def process_csv(which, file_contents, isnew):
+    # only allow inventory or sales
+    if which not in ("inventory", "sales"):
+        return {"status": "error", "message": f"Unknown type {which}"}
+
+    os.makedirs("data", exist_ok=True)
+    target = f"data/{which}.csv"
+
+    # brand-new file: overwrite
+    if isnew == "True":
+        with open(target, "w", encoding="utf-8", newline="") as f:
+            f.write(file_contents)
+        return {"status": "created"}
+
+    # otherwise we append
+    # 1. parse incoming
+    buffer = io.StringIO(file_contents)
+    incoming = csv.reader(buffer)
+    try:
+        header_in = next(incoming)
+    except StopIteration:
+        return {"status": "error", "message": "Empty CSV upload"}
+
+    # 2. read existing header
+    if not os.path.exists(target):
+        return {"status": "error", "message": f"{which}.csv does not exist"}
+    with open(target, "r", encoding="utf-8", newline="") as f_read:
+        existing = csv.reader(f_read)
+        try:
+            header_ex = next(existing)
+        except StopIteration:
+            return {"status": "error", "message": f"{which}.csv is empty"}
+
+    # 3. compare
+    if header_in != header_ex:
+        return {"status": "error", "message": "Header mismatch"}
+
+    # 4. append only data rows
+    with open(target, "a", encoding="utf-8", newline="") as f_append:
+        writer = csv.writer(f_append)
+        rows_appended = 0
+        for row in incoming:
+            writer.writerow(row)
+            rows_appended += 1
+
+    return {"status": "appended", "rows": rows_appended}
+
+
+@eel.expose
+def setSettings(settings):
+    with open(settings_path, mode="w", encoding="utf-8") as file:
+        json.dump(settings, file)
 
 
 # Start the app with an HTML file

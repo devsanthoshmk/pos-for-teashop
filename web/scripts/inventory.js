@@ -81,6 +81,7 @@ function renderInventory() {
 
 // Update inventory item when edited
 function updateInventoryItem(event) {
+    ask_save=true;
     const index = parseInt(event.target.dataset.index);
     const field = event.target.dataset.field;
     const value = event.target.textContent.trim();
@@ -96,6 +97,7 @@ function updateInventoryItem(event) {
 
 // Delete inventory item
 function deleteInventoryItem(event) {
+    ask_save=true;
     const index = parseInt(event.target.dataset.index);
     
     // Log the deletion
@@ -151,7 +153,7 @@ function confirmSave(){
 
 //asking wheather they are confirm to save?
 function saving(notyet=false){
-    overlay = document.getElementById('clearConfirmModal');
+    
     const title = overlay.querySelector('h3');
     const message = overlay.querySelector('p');
     // already defined in pos
@@ -165,8 +167,10 @@ function saving(notyet=false){
     title.textContent= "Confirm Save";
     message.innerHTML= `Are you sure you ${not} want to save those changes?${not?"":"<br>(Press ctrl/cmd+s to save directly)"}<br>P.S: This is irreversible!`;
 
-    cancelbtn.addEventListener('click',cancelit)
-    clearbtn.addEventListener('click',confirmSave)
+    if (notyet===false){
+        cancelbtn.addEventListener('click',cancelit)
+        clearbtn.addEventListener('click',confirmSave)
+    }
 
 }
 

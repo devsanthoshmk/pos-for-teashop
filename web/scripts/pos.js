@@ -27,6 +27,7 @@ function getDateTime() {
 
 
 function addItem(ele){
+  ask_save=true;
   const itemid=ele.dataset.itemid
   const billit= document.getElementById('billing')
   const item=items[itemid-1];
@@ -65,8 +66,11 @@ function addItem(ele){
     billit.innerHTML+=data;
   }
 
+  if (settings.tax_on_every===true){
+    taxamt+=item.tax-0
+  }
+
   // updating total
-  taxamt=6.5
   subtotal.textContent=`₹${tot.toFixed(2)}`;
   tax.textContent=`₹${taxamt.toFixed(2)}`;
   total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
@@ -106,6 +110,10 @@ function removeItem(ele){
               </tr>`;
 
   tot-=item.price;
+
+  if (settings.tax_on_every===true){
+    taxamt-=item.tax-0
+  }
 
 
   subtotal.textContent=`₹${tot.toFixed(2)}`;
@@ -316,6 +324,7 @@ function renderMenu(){
 
   async function globals_pos() {
       console.time("avil");
+      taxamt = settings.base_tax;
 
       if (first===true){
         items = await eel.getInventory()();
@@ -348,8 +357,6 @@ function renderMenu(){
       document.getElementById('print').addEventListener('click', printHandle);
 
       // clear confirm function utilities
-      cancelbtn = document.getElementById('cancelClear');
-      clearbtn = document.getElementById('confirmClear');
       document.getElementById('clear').addEventListener('click', clearbill);
       console.timeEnd("avil");
 
