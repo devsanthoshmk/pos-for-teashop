@@ -16,6 +16,10 @@
     --dark: #333333;
 }
 
+:root{
+    overflow: hidden;
+}
+
 body {
     background-color: var(--gray-light);
     color: var(--dark);
@@ -30,6 +34,9 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    height: 99vh;
+    position: sticky;
+    top: 4px;
 }
 
 .logo {
@@ -76,6 +83,9 @@ body {
 }
 
 @media (max-width: 768px) {
+    :root{
+        overflow-y: auto;
+    }
     body {
         flex-direction: column;
     }
@@ -83,6 +93,9 @@ body {
     .sidebar {
         width: 100%;
         padding: 10px;
+        height: unset;
+        position: unset;
+        top: unset;
     }
     
     .logo {

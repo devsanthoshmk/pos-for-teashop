@@ -40,7 +40,7 @@ function addItem(ele){
                   <td>${qty[itemid]}</td>
                   <td>${item.price}</td>
                   <td>${itemtot}</td>
-                  <td><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
+                  <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
   tot+=itemtot;
 
@@ -107,7 +107,7 @@ function removeItem(ele){
                   <td>${qty[itemid]}</td>
                   <td>${item.price}</td>
                   <td>${itemtot}</td>
-                  <td><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
+                  <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
 
   tot-=item.price;
