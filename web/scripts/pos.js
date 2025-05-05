@@ -3,13 +3,6 @@ function isNumber(str) {
     return !isNaN(str) && str.trim() !== '';
   }
 
-//showing availability dynamically using js
-function availability(ele){
-  const avail=ele.querySelector('h3 span');
-  avail.innerHTML=isNumber(items[ele.dataset.itemid-1].availability) ? `(${items[ele.dataset.itemid-1].availability})` : "";
-  // console.log(isNumber(items[ele.dataset.itemid-1].availability),items[ele.dataset.itemid-1].availability);
-}
-
 // for adding to sales
 function getDateTime() {
   const now = new Date();
@@ -149,7 +142,9 @@ function removeItem(ele){
 
 
 // for date and time
-function updateDateTime(ele) {
+function updateDateTime(from) {
+      if(from!==to) return false//if it is called by pos.js and the route changes this function stops
+      const ele=dt_el;
       const now = new Date();
 
       // Options for date
@@ -169,7 +164,9 @@ function updateDateTime(ele) {
       // Schedule next update right at the top of the next second
       const secLeft = 60 -  now.getSeconds();
       const msleft = secLeft * 1000 - now.getMilliseconds();
-      setTimeout(() => updateDateTime(ele), msleft);
+      if (ele)
+      setTimeout(() => updateDateTime(from), msleft);
+      else console.log("stoped apacalipse")
     }
 
 //print handling
@@ -286,6 +283,8 @@ function clearbill(fromprnt=false){
 
   let taxamt;
 
+  let dt_el; //for date time element change handling
+
   async function globals_pos() {
       console.time("avil");
 
@@ -295,11 +294,26 @@ function clearbill(fromprnt=false){
         first=false;
       }
       salesid=sales.at(-1).id;
-      console.log(sales.at(-1).id);
+      // console.log(sales.at(-1).id);
       // console.log(items);
 
+      //adding inventory item to menu
+      const menucont=document.getElementById('menu-container');
+      let items_id=0;
+      for (item of items){
+        items_id+=1;
+        avail=isNumber(item.availability) ? `(${item.availability})` : "";
+        if(item.availability==='yes'||item.availability>0){
+          const menu_item=`<div class="menu-item" data-itemid="${items_id}" >
+                              <h3>${item.name}<span title="Availability">${avail}</span></h3>
+                              <p>₹${item.price}</p>
+                          </div>`;
+          menucont.innerHTML+=menu_item;
+        }
+      }
+
       // showing availability
-      document.querySelectorAll('.menu-item').forEach((ele) => availability(ele));
+      // document.querySelectorAll('.menu-item').forEach((ele) => availability(ele));
 
       // initialize summary elements
       summary = document.getElementById('bill-summary');
@@ -311,7 +325,8 @@ function clearbill(fromprnt=false){
       document.querySelectorAll('.menu-item').forEach((ele) => ele.addEventListener('click', () => addItem(ele)));
 
       // for date and time
-      updateDateTime(document.getElementById('date-time'));
+      dt_el=document.getElementById('date-time');
+      updateDateTime(to);
 
       // handling print
       document.getElementById('print').addEventListener('click', printHandle);
@@ -320,7 +335,7 @@ function clearbill(fromprnt=false){
       cancelbtn = document.getElementById('cancelClear');
       clearbtn = document.getElementById('confirmClear');
       document.getElementById('clear').addEventListener('click', clearbill);
-            console.timeEnd("avil");
+      console.timeEnd("avil");
 
   }
 

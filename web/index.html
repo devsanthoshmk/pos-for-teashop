@@ -59,11 +59,26 @@
     <div id="main" class="main-content">
     </div>
 
+    <!-- window to ask clear conformation -->
+    <div class="modal-overlay" id="clearConfirmModal">
+        <div class="modal-content">
+          <h3>Clear Bill</h3>
+          <p>Are you sure you want to clear the current bill?</p>
+          <div class="modal-buttons">
+            <button class="btn btn-cancel" id="cancelClear">NO</button>
+            <button class="btn btn-confirm" id="confirmClear">Yes</button>
+          </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript" src="/scripts/pos.js"></script>
     <script type="text/javascript" src="/scripts/inventory.js"></script>
 
     <script type="text/javascript">
+        let to;
         async function fetchData(to){
             const first_serve={"1":true,"2":true,"3":true};
             let pos,dashboard,inventory;
@@ -101,7 +116,7 @@
         }
        function csrit(ele){
         // console.log(ele);
-        const to = ele.id
+        to = ele.id
         fetchData(to)
         .then( ({content,func}) =>{
             // console.log(content,"func\n",func)
@@ -113,9 +128,9 @@
         });
 
        }
-
-       const ele=document.getElementById('2')
-       csrit(ele);
+       let ask_saved;
+       const el=document.getElementById('2')
+       csrit(el);
 
     </script>
 

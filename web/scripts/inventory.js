@@ -1,27 +1,17 @@
+function showToast(message, duration = 3000) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  // Pass duration to CSS animation (for fadeOut delay)
+  toast.style.setProperty('--duration', duration + 'ms');
 
-// Initialize inventory data
-const inventoryData = [
-    { name: "Tea", availability: "yes", price: 15 },
-    { name: "Puffs", availability: 24, price: 20 },
-    { name: "Coffee", availability: "yes", price: 20 },
-    { name: "Special Tea", availability: "limited", price: 25 },
-    { name: "Black Tea", availability: "yes", price: 20 },
-    { name: "Milk", availability: "yes", price: 15 },
-    { name: "Samosa", availability: 10, price: 20 }
-];
+  container.appendChild(toast);
 
-// Update date and time
-function inventupdateDateTime() {
-    const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    };
-    dateTimeElement.textContent = now.toLocaleDateString('en-US', options);
+  // Remove the toast element after it has fully faded out
+  setTimeout(() => {
+    container.removeChild(toast);
+  }, duration + 500); // duration + fadeOut time
 }
 
 // Render inventory table
@@ -98,8 +88,10 @@ function updateInventoryItem(event) {
     // Update the data
     inventoryData[index][field] = field === 'price' ? parseFloat(value) || 0 : value;
     
-    // Log the change
-    console.log(`Updated item: ${inventoryData[index].name}, ${field}: ${value}`);
+    if (to_edit[index]===true && inventoryData[index]['name']!=="Tap to edit" && inventoryData[index]['price']!==0){
+        to_edit[index]===false;
+        delete to_edit[index];
+    }    
 }
 
 // Delete inventory item
@@ -120,11 +112,13 @@ function deleteInventoryItem(event) {
 function addInventoryItem() {
     // Add new blank item
     inventoryData.push({
-        name: "New Item",
+        name: "Tap to edit",
         availability: "yes",
         price: 0
     });
-    
+
+    to_edit[inventoryData.length-1]=true;
+
     // Log the addition
     console.log("Added new row to inventory");
     
@@ -132,29 +126,88 @@ function addInventoryItem() {
     renderInventory();
     
     // Scroll to bottom to see new item
-    inventoryList.parentElement.scrollTop = inventoryList.parentElement.scrollHeight;
+    inventoryList.parentElement.parentElement.scrollTop = inventoryList.parentElement.parentElement.scrollHeight;
+}
+
+function cancelit(){
+    overlay.style.display = 'none';
+    cancelbtn.removeEventListener('click',cancelit)
+}
+
+function confirmSave(){
+    Object.keys(to_edit).forEach(dind=>{
+        if (to_edit[dind]===true){
+            inventoryData.splice(dind,1);
+        }
+    })
+    items = structuredClone(inventoryData)
+    eel.setInventory(items);
+    showToast('Changes Saved!', 3000)
+    if(overlay){
+        overlay.style.display = 'none';
+        clearbtn.removeEventListener('click',cancelit)
+    }
+}
+
+//asking wheather they are confirm to save?
+function saving(notyet=false){
+    overlay = document.getElementById('clearConfirmModal');
+    const title = overlay.querySelector('h3');
+    const message = overlay.querySelector('p');
+    // already defined in pos
+    // const cancelBtn = overlay.querySelector('#cancelClear');
+    // const confirmBtn = overlay.querySelector('#confirmClear');
+
+    overlay.style.display = 'flex';
+
+    const not = notyet?"DONN'T":""
+
+    title.textContent= "Confirm Save";
+    message.innerHTML= `Are you sure you ${not} want to save those changes?${not?"":"<br>(Press ctrl/cmd+s to save directly)"}<br>P.S: This is irreversible!`;
+
+    cancelbtn.addEventListener('click',cancelit)
+    clearbtn.addEventListener('click',confirmSave)
+
 }
 
 
-let inventoryList;
-let addItemBtn;
-let dateTimeElement;
+let inventoryData; // for cloning inventoory data
+let inventoryList, savebtn, addItemBtn, overlay; //for global dom elements
+const to_edit={}; //used to check is there are any empty row created
 
 
 function globals_inventory(){
-    console.log(items);
+
+    // Initialize inventory data
+    inventoryData = structuredClone(items); 
+
+
+    dt_el=document.getElementById("date-time");
+    updateDateTime(to);
+
+      
+    // console.log(items);
      // DOM elements
     inventoryList = document.getElementById('inventoryList');
     addItemBtn = document.getElementById('addItemBtn');
-    dateTimeElement = document.getElementById('date-time');
+    savebtn = document.getElementById('savebtn')
 
     // Event listeners
     addItemBtn.addEventListener('click', addInventoryItem);
 
+    
+    savebtn.onclick = function(){
+        // conform clear overlay
+        saving()
 
-    // Initialize date/time
-    inventupdateDateTime();
-    setInterval(updateDateTime, 60000); // Update every minute
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent browser's save dialog
+        confirmSave()
+      }
+    });
 
 
     // Initial render
