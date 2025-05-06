@@ -78,6 +78,11 @@ function settings_globals(){
       console.log('Downloading inventory.csv');
       // In a real implementation, this would trigger the download
       alert('Inventory.csv download started');
+      eel.serve("inventory.csv","False")().then((content)=>{
+        console.log(content)
+        download(content,"1");
+      });
+
   });
 
   document.getElementById('download-sales').addEventListener('click', function() {
@@ -100,6 +105,28 @@ function settings_globals(){
     
     });
 
+}
+
+function download(content,to){
+  const name= to=="1"?"inventory.csv":"sales.csv";
+
+  // Create a Blob from the content
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+
+  // Create a temporary anchor element
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", name); // name of the file to download
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+
+  // Trigger the download
+  link.click();
+
+  // Clean up
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
  function render_sample(sample) {
