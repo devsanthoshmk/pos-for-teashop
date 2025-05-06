@@ -110,6 +110,7 @@ body {
         display: flex;
         overflow-x: auto;
         padding-bottom: 10px;
+        justify-content: center;
     }
     
     .nav-item {

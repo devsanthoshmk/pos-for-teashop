@@ -139,9 +139,6 @@
        function csrit(ele){
         if (ask_save===true){
             ask_save=false;
-            overlay = document.getElementById('clearConfirmModal');
-            cancelbtn = document.getElementById('cancelClear');
-            clearbtn = document.getElementById('confirmClear');
             saving(true);
 
             clearbtn.onclick=function(){
@@ -162,6 +159,9 @@
 
         
        }
+       overlay = document.getElementById('clearConfirmModal');
+       cancelbtn = document.getElementById('cancelClear');
+       clearbtn = document.getElementById('confirmClear');
        let ask_save=false;
        let settings;
        eel.getSettings()().then((data)=>{
