@@ -93,17 +93,24 @@ function settings_globals(){
 
   // Save settings
   document.getElementById('save-settings').addEventListener('click', function() {
-    eel.settings()();
+    eel.setSettings(settings)().then(()=>showToast("Settings Saved Successfully!"));
+    if (file){
+      try{
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const csvText = e.target.result;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const csvText = e.target.result;
-
-      eel.process_csv("inventory",csvText,del_prev?"True":"False")().then((rtn)=>showToast(JSON.stringify(rtn)))
-    };
-    reader.readAsText(event.target.files[0])
-    
-    });
+          eel.process_csv("inventory",csvText,del_prev?"True":"False")().then((rtn)=>showToast(JSON.stringify(rtn)))
+        };
+        reader.readAsText(file);
+        showToast("Data Upload Saved Successfully!")
+        
+      } catch(e){
+        showToast("Error: "+e);
+        console.error(e);
+      }
+    }
+      });
 
 }
 
