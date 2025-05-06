@@ -76,8 +76,6 @@ function settings_globals(){
   // Download buttons
   document.getElementById('download-inventory').addEventListener('click', function() {
       console.log('Downloading inventory.csv');
-      // In a real implementation, this would trigger the download
-      alert('Inventory.csv download started');
       eel.serve("inventory.csv","False")().then((content)=>{
         console.log(content)
         download(content,"1");
@@ -87,8 +85,10 @@ function settings_globals(){
 
   document.getElementById('download-sales').addEventListener('click', function() {
       console.log('Downloading sales.csv');
-      // In a real implementation, this would trigger the download
-      alert('Sales.csv download started');
+      eel.serve("sales.csv","False")().then((content)=>{
+        console.log(content)
+        download(content,"2");
+      });
   });
 
   // Save settings

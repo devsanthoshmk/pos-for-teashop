@@ -232,15 +232,22 @@ function printHandle(){
     confirmClear();
           
     console.log(sales);
+    btnTextBack();
   }
 
 // clear confirm function utilities
+
+  function btnTextBack(){
+    cancelbtn.textContent='No';
+    clearbtn.textContent='Yes';
+  }
 
   //hide clear confirm overlay
   function hideconf(bol){
       document.getElementById('clearConfirmModal').style.display = 'none';
       cancelbtn.removeEventListener('click',hideconf);
       clearbtn.removeEventListener('click',confirmClear);
+      btnTextBack();
   }
   //handling clear bill
   function confirmClear(bol){
