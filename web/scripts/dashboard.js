@@ -416,8 +416,10 @@ async function load_dashboard() {
     // Export button functionality
     const exportBtn = document.querySelector('.export-btn');
     exportBtn.addEventListener('click', function() {
-        // In a real application, this would generate and download a CSV file
-        alert('This would download a CSV file of the product performance data in a real application.');
+        eel.serve("sales.csv","False")().then((content)=>{
+            console.log(content)
+            download(content,"2");
+          });
     });
 }
 
