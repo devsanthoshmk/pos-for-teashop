@@ -17,7 +17,7 @@ eel.init("web")
 @eel.expose
 def serve(html, web="True"):
     web = "data/" if web == "False" else "web/"
-    with open(f"{web}{html}" + (".html" if web == "web/" else ""), "r") as f:
+    with open(f"{web}{html}" + (".html" if web == "web/" else ""), "r", encoding="utf-8") as f:
         content = f.read()
         return content
 
