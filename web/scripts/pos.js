@@ -336,6 +336,9 @@ function renderMenu(){
       // console.log(items);
       renderMenu();
 
+      // Call this function after renderMenu() in your existing code
+addSearchFunctionality();
+
 
       // showing availability
       // document.querySelectorAll('.menu-item').forEach((ele) => availability(ele));
@@ -361,5 +364,98 @@ function renderMenu(){
       console.timeEnd("avil");
 
   }
+
+
+  // Add search functionality
+function addSearchFunctionality() {
+  // Wait for DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    initSearchFunctionality();
+  });
+  
+  // If DOM is already loaded, initialize immediately
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initSearchFunctionality();
+  }
+}
+
+function initSearchFunctionality() {
+  // Get menu container
+  const menuContainer = document.getElementById('menu-container');
+  
+  // If menu container doesn't exist yet, retry after a short delay
+  if (!menuContainer) {
+    console.log('Menu container not found, retrying in 500ms...');
+    setTimeout(initSearchFunctionality, 500);
+    return;
+  }
+  
+  // Check if search is already added to avoid duplicates
+  if (document.getElementById('menu-search')) {
+    return;
+  }
+  
+  // Create search input element
+  const searchContainer = document.createElement('div');
+  searchContainer.className = 'search-container';
+  
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.id = 'menu-search';
+  searchInput.placeholder = 'Search menu items...';
+  searchInput.className = 'menu-search-input';
+  
+  // Create search icon (optional)
+  const searchIcon = document.createElement('span');
+  searchIcon.className = 'search-icon';
+  searchIcon.innerHTML = '🔍';
+  
+  // Append elements
+  searchContainer.appendChild(searchIcon);
+  searchContainer.appendChild(searchInput);
+  
+  // Insert search before the menu items
+  menuContainer.insertBefore(searchContainer, menuContainer.firstChild);
+  
+  // Add event listeners for search functionality
+  searchInput.addEventListener('input', filterMenuItems);
+  
+  // Focus on search input when any key is pressed (if not already focused on an input)
+  document.addEventListener('keydown', (e) => {
+    // Don't trigger if user is already typing in an input or if it's a special key
+    if (document.activeElement.tagName !== 'INPUT' && 
+        !e.ctrlKey && !e.altKey && !e.metaKey && 
+        e.key.length === 1) { // Only for printable characters
+      searchInput.focus();
+    }
+  });
+}
+
+// Filter menu items based on search query
+function filterMenuItems() {
+  const searchQuery = document.getElementById('menu-search').value.toLowerCase();
+  const menuItems = document.querySelectorAll('.menu-item');
+  
+  menuItems.forEach(item => {
+    const itemName = item.querySelector('h3').textContent.toLowerCase();
+    
+    if (itemName.includes(searchQuery)) {
+      item.style.display = ''; // Show the item
+    } else {
+      item.style.display = 'none'; // Hide the item
+    }
+  });
+}
+
+
+
+// You can call this function to clear the search
+function clearSearch() {
+  const searchInput = document.getElementById('menu-search');
+  if (searchInput) {
+    searchInput.value = '';
+    filterMenuItems();
+  }
+}
 
 // globals_pos(); //test calling this helps in csr

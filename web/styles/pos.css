@@ -415,6 +415,57 @@ h2 {
     .btn-delete-confirm:hover {
         background-color: #e74c3c;
     }
+/* Search Container Styles */
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #f9f3ed;
+  border: 1px solid #e6ccb3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  grid-column: 1 / -1; /* Make search span all columns in grid */
+}
+
+.menu-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  padding: 8px;
+  outline: none;
+  color: #5b3e29;
+}
+
+.menu-search-input::placeholder {
+  color: #8c6e5a;
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #5b3e29;
+  font-size: 18px;
+}
+
+/* Focus state for the search container */
+.search-container:focus-within {
+  background-color: #e6ccb3;
+  box-shadow: 0 0 0 2px #5b3e29;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-container {
+    padding: 6px 10px;
+  }
+  
+  .menu-search-input {
+    font-size: 14px;
+  }
+}
+    
 
 
 /*          testing*/
