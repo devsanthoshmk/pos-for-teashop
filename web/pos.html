@@ -17,8 +17,9 @@
                       <tr>
                           <th>Item</th>
                           <th>Qty</th>
-                          <th>Price</th>
-                          <th>Total</th>
+                          <th>Price(₹)</th>
+                          <th>Offer(₹)</th>
+                          <th>Total(₹)</th>
                           <th class="print-hide" style="width:40px; pointer-events: pointer;" onclick="clearbill()"><b>×</b></th> <!-- Compact column header -->
 
                       </tr>
@@ -30,6 +31,8 @@
                           <td>-</td>
                           <td>-</td>
                           <td>-</td>
+                          <td>-</td>
+
                           
                       </tr>
                       
@@ -43,7 +46,11 @@
                     <span id='subtotal'>-</span>
                 </div>
                 <div class="bill-row">
-                    <span>Tax:</span>
+                    <span style="color: #4caf50;"><b>- You Saved </b>:</span>
+                    <span id="offer">-</span>
+                </div>
+                <div class="bill-row">
+                    <span style="color: #f44336;">+ Tax:</span>
                     <span id='tax'>-</span>
                 </div>
                 <div class="bill-row">

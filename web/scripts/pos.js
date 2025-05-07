@@ -45,16 +45,19 @@ function addItem(ele){
   }
   qty[itemid] = (qty[itemid] || 0)+1;
 
-  const itemtot=qty[itemid]*item.price
+
+  const itemtot=qty[itemid]*(item.price-0-item.offer-0);
 
   const data=`<tr id="blling-${itemid}">
                   <td>${item.name}</td>
                   <td>${qty[itemid]}</td>
                   <td>${item.price}</td>
-                  <td>${itemtot}</td>
+                  <td>${(qty[itemid]*(item.offer-0)).toFixed(2)}</td>
+                  <td>${itemtot.toFixed(2)}</td>
                   <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
-  tot+=itemtot;
+  tot+=item.price-0-item.offer-0;
+  total_offer+=item.offer-0;
 
   if (isFirst) {
     billit.innerHTML=data
@@ -73,6 +76,7 @@ function addItem(ele){
   // updating total
   subtotal.textContent=`₹${tot.toFixed(2)}`;
   tax.textContent=`₹${taxamt.toFixed(2)}`;
+  offer.textContent=`₹${total_offer.toFixed(2)}`
   total.textContent=`₹${(tot+taxamt).toFixed(2)}`;
 
   // console.log(getDateTime());
@@ -99,17 +103,19 @@ function removeItem(ele){
   const itemid=ele.dataset.itemid;
   const item=items[itemid-1];
   qty[itemid]-=1;
-  const itemtot=qty[itemid]*item.price;
+  const itemtot=qty[itemid]*(item.price-0-item.offer-0);
 
   const data=`<tr id="blling-${itemid}">
                   <td>${item.name}</td>
                   <td>${qty[itemid]}</td>
                   <td>${item.price}</td>
-                  <td>${itemtot}</td>
+                  <td>${(qty[itemid]*(item.offer-0)).toFixed(2)}</td>
+                  <td>${itemtot.toFixed(2)}</td>
                   <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
 
-  tot-=item.price;
+  tot-=item.price-0-item.offer-0;
+  total_offer-=item.offer-0;
 
   if (settings.tax_on_every===true){
     taxamt-=item.tax-0
@@ -315,6 +321,7 @@ function renderMenu(){
   let subtotal;
   let tax;
   let total;
+  let offer;
 
   // Clear confirmation buttons
   let cancelbtn;
@@ -328,6 +335,8 @@ function renderMenu(){
   let taxamt;
 
   let dt_el; //for date time element change handling
+
+  let total_offer=0;
 
   async function globals_pos() {
       console.time("avil");
@@ -355,6 +364,7 @@ addSearchFunctionality();
       subtotal = summary.querySelector('#subtotal');
       tax = summary.querySelector('#tax');
       total = summary.querySelector('#total');
+      offer = summary.querySelector('#offer')
 
       // adding functionality to menu items
       document.querySelectorAll('.menu-item').forEach((ele) => ele.addEventListener('click', () => addItem(ele)));
