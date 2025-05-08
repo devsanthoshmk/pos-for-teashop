@@ -273,6 +273,7 @@ function printHandle(){
       tot=0;
       sale=[];
       salesid+=1;
+      ask_save=false;
       hideconf();
       
   }

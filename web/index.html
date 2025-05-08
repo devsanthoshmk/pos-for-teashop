@@ -80,6 +80,23 @@
     <script type="text/javascript" src="/scripts/settings.js"></script>
 
     <script type="text/javascript">
+        let ref_number=1;
+        document.addEventListener("keydown", function (e) {
+            // For Windows/Linux
+            if ((e.ctrlKey && e.key === 'r') || 
+                // For macOS
+                (e.metaKey && e.key === 'r')) {
+                if ( ref_number%2!==0){
+                    e.preventDefault();
+                    showToast("Refreshing the page will clear the bill. Please save the bill before refreshing and hit Ctrl+R again.",6000)
+                    ref_number+=1;
+                }
+            }
+          });
+          
+    </script>
+
+    <script type="text/javascript">
         let to;
         async function fetchData(to){
             const first_serve={"1":true,"2":true,"3":true,"4":true};
