@@ -302,6 +302,63 @@ function renderMenu(){
   }
 }
 
+function customer_detail_menu() {
+  const header = costumer_container.querySelector('.dropdown-header');
+  const content = costumer_container.querySelector('.dropdown-content');
+  const icon = costumer_container.querySelector('.dropdown-icon');
+  const nameInput = costumer_container.querySelector('#customerName');
+  const phoneInput = costumer_container.querySelector('#customerPhone');
+
+  costumer_container.style.display= 'block'; 
+
+  // toggle dropdown content
+  let isExpanded = false;
+  header.addEventListener('click', () => {
+    isExpanded = !isExpanded;
+    content.style.display = isExpanded ? 'block' : 'none';
+    icon.textContent = isExpanded ? '▼' : '►';
+  });
+
+  // phone-only, max-10 digits
+  phoneInput.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  // blur logging
+  nameInput.addEventListener('blur', (el)=>{
+    if (el.target.value.length < 3) {
+      alert('Name must be at least 3 characters long.');
+      el.target.value = '';
+    } else {
+      console.log('Name:', el.target.value);
+    }
+  });
+  phoneInput.addEventListener('blur',  (el)=>{
+    if (parseInt(el.target.value.length,10) < 10) {
+      alert('Name must be at least 3 characters long.');
+      el.target.value = '';
+    } else {
+      console.log('Name:', parseInt(el.target.value.length,10));
+    }
+  });
+
+  // initialize visibility on load
+  costumer_container.style.display = askDetailsCheckbox.checked ? 'block' : 'none';
+}
+
+function callback_ask_details() {
+  if (askDetailsCheckbox.checked) {
+      customer_detail_menu();
+      // Code to show customer details form or modal
+      console.log('Ask details checkbox checked - add your functionality here');
+      // You can trigger a modal or expand a form section here
+  } else {
+      costumer_container.style.display = 'none'; // Hide the customer details form or modal
+      // Code to hide customer details form or modal
+      console.log('Ask details checkbox unchecked');
+  }
+}
+
 
   // MAIN FUNC CALLED AS ROOT
   let items;
@@ -329,6 +386,9 @@ function renderMenu(){
 
   let dt_el; //for date time element change handling
 
+  let askDetailsCheckbox;
+  let costumer_container;
+
   async function globals_pos() {
       console.time("avil");
       taxamt = settings.base_tax;
@@ -344,7 +404,15 @@ function renderMenu(){
       renderMenu();
 
       // Call this function after renderMenu() in your existing code
-addSearchFunctionality();
+      addSearchFunctionality();
+
+      costumer_container = document.querySelector('#customer-details-container');
+
+
+      askDetailsCheckbox = document.getElementById('askDetailsCheckbox');
+      askDetailsCheckbox.checked = settings.ask_customer_details;
+      callback_ask_details()
+      askDetailsCheckbox.addEventListener('change', callback_ask_details);
 
 
       // showing availability
