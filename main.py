@@ -5,9 +5,47 @@ import os
 import platform
 import subprocess
 import io
+import builtins
+import sys
+
+
+# keep reference to the real open
+_original_open = builtins.open
+
+
+def resource_path(relative_path: str) -> str:
+    """
+    Returns the absolute path to a resource, whether we're running
+    in a PyInstaller bundle or in normal script mode.
+    """
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
+def custom_open(file, mode="r", *args, **kwargs):
+    """
+    If `file` is a relative path and there *is* a bundled resource
+    at resource_path(file), redirect to that. Otherwise leave it alone.
+    """
+    # only consider relative paths
+    if not os.path.isabs(file):
+        bundled = resource_path(file)
+        # rewrite *only* if the bundled copy actually exists
+        if os.path.exists(bundled):
+            file = bundled
+    # delegate to the real open()
+    return _original_open(file, mode, *args, **kwargs)
+
+
+# install our override
+builtins.open = custom_open
 
 
 inventory_path = "data/inventory.csv"
+sales_path = "data/sales.csv"
 settings_path = "data/settings.json"
 
 
@@ -171,7 +209,8 @@ eel.start(
     host="localhost",  # <-- must match the URL below
     port=6969,  # <-- must match the URL below
     cmdline_args=[
-        "/usr/bin/chromium",  # full path to the binary
+        "/usr/bin/chromium",
+        "--start-maximized",
         "--app=http://localhost:6969",  # same host+port as above
         "--disable-infobars",
     ],
