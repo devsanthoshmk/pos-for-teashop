@@ -1,10 +1,13 @@
-function showToast(message, duration = 3000) {
+function showToast(message,duration = 3000,danger=false) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
   // Pass duration to CSS animation (for fadeOut delay)
   toast.style.setProperty('--duration', duration + 'ms');
+  if (danger===true){
+    toast.style.backgroundColor = "var(--danger)";
+  }
 
   container.appendChild(toast);
 
@@ -87,7 +90,7 @@ function renderInventory() {
         row.appendChild(nameCell);
         row.appendChild(availabilityCell);
         row.appendChild(priceCell);
-        row.appendChild(taxCell);
+        if(settings.tax_on_every===true) row.appendChild(taxCell);
         row.appendChild(actionsCell);
         
         // Append row to table
@@ -111,8 +114,10 @@ function updateInventoryItem(event) {
         const avail = inventoryData[index][field];
         if (avail.toLowerCase()!=="yes" || avail.toLowerCase()!=="no" || !Number(avail)){
         console.log(2)
-
+            event.target.textContent = 'CHANGE HERE'
+            inventoryData[index][field] = 'no';
             showToast("Availability can only contains 'yes', 'no' or number of items available",3000,true);
+
         }
     }
     
