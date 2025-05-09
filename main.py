@@ -6,6 +6,7 @@ import platform
 import subprocess
 import io
 
+
 inventory_path = "data/inventory.csv"
 settings_path = "data/settings.json"
 
@@ -17,7 +18,9 @@ eel.init("web")
 @eel.expose
 def serve(html, web="True"):
     web = "data/" if web == "False" else "web/"
-    with open(f"{web}{html}" + (".html" if web == "web/" else ""), "r", encoding="utf-8") as f:
+    with open(
+        f"{web}{html}" + (".html" if web == "web/" else ""), "r", encoding="utf-8"
+    ) as f:
         content = f.read()
         return content
 
@@ -163,8 +166,13 @@ def setSettings(settings):
 
 # Start the app with an HTML file
 eel.start(
-    "index.html",
-    mode="default",
-    cmdline_args=["--app", "--start-fullscreen", "--browser-startup-dialog"],
-    port=1234,
+    "index.html",  # your entry‐point HTML
+    mode="custom",  # “custom” lets us hand in the full command
+    host="localhost",  # <-- must match the URL below
+    port=6969,  # <-- must match the URL below
+    cmdline_args=[
+        "/usr/bin/chromium",  # full path to the binary
+        "--app=http://localhost:6969",  # same host+port as above
+        "--disable-infobars",
+    ],
 )

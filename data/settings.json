@@ -1,6 +1,6 @@
 {
 	"base_tax" : 0,
 	"tax_on_every"  : false,
-	"inventory_direct" : "pos-for-teashop/data/inventory.csv",
-	"sales_direct" : "pos-for-teashop/data/sales.csv"
+	"inventory_direct" : "/data/inventory.csv",
+	"sales_direct" : "/data/sales.csv"
 }
