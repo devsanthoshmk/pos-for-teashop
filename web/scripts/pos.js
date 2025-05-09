@@ -192,6 +192,11 @@ function updateDateTime(from) {
 //print handling
 function printHandle(){
   if (tot > 1) {
+
+        if (askDetailsCheckbox.checked===true && !(name.length>=0 && phone.length===10)){
+          showToast("Add costomer details or uncheck 'Ask Customer Details' to update bill without costomer deatils.",8000,true)
+          return
+        }
         window.print();
         //changing clear confirm overlay to clear after print
           cancelbtn.textContent='Bill Print Failed!';
@@ -214,6 +219,7 @@ function printHandle(){
     const subtotal = sale.at(-1).subtotal
     const tax = sale.at(-1).tax
     const grandtotal = sale.at(-1).total
+
     sale.forEach((sal)=>{
       sal.id=parseInt(sales.at(-1).id,10)+1
       const [ date, time ] = getDateTime();
@@ -223,6 +229,9 @@ function printHandle(){
       sal.subtotal=subtotal;
       sal.tax=tax;
       sal.grandtotal=grandtotal;
+      // costomer details
+      sal.name = name;
+      sal.phone = phone;
     });
 
     // sending items to python to update inventory and sales
@@ -302,6 +311,10 @@ function renderMenu(){
   }
 }
 
+function askDetails(resolve){
+  
+}
+
 function customer_detail_menu() {
   const header = costumer_container.querySelector('.dropdown-header');
   const content = costumer_container.querySelector('.dropdown-content');
@@ -328,17 +341,17 @@ function customer_detail_menu() {
   nameInput.addEventListener('blur', (el)=>{
     if (el.target.value.length < 3) {
       alert('Name must be at least 3 characters long.');
-      el.target.value = '';
     } else {
       console.log('Name:', el.target.value);
+      name = el.target.value
     }
   });
   phoneInput.addEventListener('blur',  (el)=>{
-    if (parseInt(el.target.value.length,10) < 10) {
-      alert('Name must be at least 3 characters long.');
-      el.target.value = '';
+    if ((parseInt(el.target.value,10)+"").length !== 10) {
+      alert('Phone must contain only numbers without +91.');
     } else {
       console.log('Name:', parseInt(el.target.value.length,10));
+      phone = el.target.value
     }
   });
 
@@ -386,8 +399,12 @@ function callback_ask_details() {
 
   let dt_el; //for date time element change handling
 
+// costmer details elem
   let askDetailsCheckbox;
   let costumer_container;
+  // coustmer details variable
+  let name;
+  let phone;
 
   async function globals_pos() {
       console.time("avil");
