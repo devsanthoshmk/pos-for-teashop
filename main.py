@@ -205,13 +205,8 @@ def setSettings(settings):
 # Start the app with an HTML file
 eel.start(
     "index.html",  # your entry‐point HTML
-    mode="custom",  # “custom” lets us hand in the full command
-    host="localhost",  # <-- must match the URL below
-    port=6969,  # <-- must match the URL below
     cmdline_args=[
-        "/usr/bin/chromium",
         "--start-maximized",
-        "--app=http://localhost:6969",  # same host+port as above
         "--disable-infobars",
     ],
 )
