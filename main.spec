@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('/home/santhosh/EDUCATION CONTENTS/internship/pos-for-teashop/venv/lib/python3.13/site-packages/eel/eel.js', 'eel'), ('web', 'web'), ('data', 'data')],
+    datas=[('C:\\Users\\Manikandan M\\Downloads\\pos-for-teashop-tea-shop\\venv\\Lib\\site-packages\\eel\\eel.js', 'eel'), ('web', 'web'), ('data', 'data')],
     hiddenimports=['bottle_websocket'],
     hookspath=[],
     hooksconfig={},
