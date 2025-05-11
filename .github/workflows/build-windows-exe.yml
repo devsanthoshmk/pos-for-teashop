@@ -44,22 +44,22 @@
 
 
 
-      - uses: actions/checkout@v3
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/main.exe
-          asset_name: ChaiTime-BSPostable.exe
-          tag: ${{ github.ref }}
-          overwrite: true
-          body: "Releasing portable exe"
+#       - uses: actions/checkout@v3
+#         uses: svenstaro/upload-release-action@v2
+#         with:
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+#           file: dist/main.exe
+#           asset_name: ChaiTime-BSPostable.exe
+#           tag: ${{ github.ref }}
+#           overwrite: true
+#           body: "Releasing portable exe"
 
-      - uses: actions/checkout@v3
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: output/*.exe
-          asset_name: ChaiTime-BSSetup.exe
-          tag: ${{ github.ref }}
-          overwrite: true
-          body: "Releasing setup exe"
+#       - uses: actions/checkout@v3
+#         uses: svenstaro/upload-release-action@v2
+#         with:
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+#           file: output/*.exe
+#           asset_name: ChaiTime-BSSetup.exe
+#           tag: ${{ github.ref }}
+#           overwrite: true
+#           body: "Releasing setup exe"
