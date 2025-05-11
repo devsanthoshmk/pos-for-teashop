@@ -202,9 +202,8 @@ def setSettings(settings):
         json.dump(settings, file)
 
 
-# Start the app with an HTML file
 eel.start(
-    "index.html",  # your entry‐point HTML
+    "index.html",
     cmdline_args=[
         "--start-maximized",
         "--disable-infobars",
