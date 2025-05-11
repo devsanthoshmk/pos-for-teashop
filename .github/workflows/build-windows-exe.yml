@@ -52,22 +52,26 @@ jobs:
 
       - name: Upload portable EXE to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: dist/main.exe
           asset_name: TeaShopPortable-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
-          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Upload installer to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: Output/*.exe
           asset_name: TeaShopInstaller-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
-          token: ${{ secrets.PAT_TOKEN }}
 
 # --------------------------------------------
 # IMPORTANT:
-# Ensure you have a classic PAT in Secrets.PAT_TOKEN with full repo scope.
+# Ensure you have a classic Personal Access Token (PAT) with `repo` scope stored
+# as the secret PAT_TOKEN in your repository settings.
+# The GITHUB_TOKEN environment variable for each release/upload step will use that PAT.
