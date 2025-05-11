@@ -110,13 +110,8 @@ function updateInventoryItem(event) {
 
     // availability
     if(field==='availability'){
-        console.log(1)
         const avail = inventoryData[index][field];
-        console.log(avail,Number(avail),typeof avail)
-        console.log((!isNumber(avail) && avail.toLowerCase()!=="yes" && avail.toLowerCase()!=="no"))
-        console.log(avail.toLowerCase()!=="yes" , avail.toLowerCase()!=="no")
         if (!isNumber(avail) && avail.toLowerCase()!=="yes" && avail.toLowerCase()!=="no"){
-        console.log(2)
             event.target.textContent = 'CHANGE HERE'
             inventoryData[index][field] = 'no';
             showToast("Availability can only contains 'yes', 'no' or number of items available",3000,true);
