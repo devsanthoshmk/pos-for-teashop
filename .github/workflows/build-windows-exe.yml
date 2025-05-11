@@ -31,7 +31,8 @@ jobs:
 
       - name: Build portable EXE with PyInstaller
         run: |
-          pyinstaller main.py --onefile --noconsole
+          python -m eel main.py web --add-data "data:data" --onefile --noconsole --icon=bill.png
+
 
       - name: Install Inno Setup
         run: |
@@ -39,39 +40,36 @@ jobs:
 
       - name: Compile installer with Inno Setup
         run: |
-          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' 'Setup.iss'
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' 'setup.iss'
 
-      - name: Create or update GitHub Release
-        id: release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+
+       - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
-          name: "TeaShop ${{ env.RELEASE_VERSION }}"
+          release_name: Release ${{ env.RELEASE_VERSION }}
+          body: |
+            - Portable EXE built with PyInstaller  
+            - Inno Setup installer  
+          draft: false
+          prerelease: false
 
-      - name: Upload portable EXE to Release
+      # Upload the PyInstaller EXE
+      - name: Upload Portable EXE
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: dist/main.exe
-          asset_name: TeaShopPortable-${{ env.RELEASE_VERSION }}.exe
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist\main.exe         # adjust to your actual exe path
+          asset_name: app-portable.exe
           asset_content_type: application/octet-stream
 
-      - name: Upload installer to Release
+      # Upload the Inno Setup installer
+      - name: Upload Installer
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: Output/*.exe
-          asset_name: TeaShopInstaller-${{ env.RELEASE_VERSION }}.exe
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: output\*.exe      # adjust to where ISCC put it
+          asset_name: app-installer.exe
           asset_content_type: application/octet-stream
-
-# --------------------------------------------
-# IMPORTANT:
-# Ensure you have a classic Personal Access Token (PAT) with `repo` scope stored
-# as the secret PAT_TOKEN in your repository settings.
-# The GITHUB_TOKEN environment variable for each release/upload step will use that PAT.
