@@ -43,32 +43,27 @@ jobs:
 
       - name: Create or update GitHub Release
         id: release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: "TeaShop ${{ env.RELEASE_VERSION }}"
-          draft: false
-          prerelease: false
+          name: "TeaShop ${{ env.RELEASE_VERSION }}"
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Upload portable EXE to Release
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: dist/main.exe
           asset_name: TeaShopPortable-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Upload installer to Release
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: Output/*.exe
           asset_name: TeaShopInstaller-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
+          token: ${{ secrets.PAT_TOKEN }}
 
