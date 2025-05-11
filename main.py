@@ -129,7 +129,6 @@ def setInventory(data):
         return f"Error writing to file: {e}"
 
 
-# to get settings
 @eel.expose
 def getSettings():
     with open(settings_path, mode="r", encoding="utf-8") as file:
