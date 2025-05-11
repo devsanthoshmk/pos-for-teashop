@@ -56,20 +56,20 @@ jobs:
           draft: false
           prerelease: false
 
-      # Upload the PyInstaller EXE
+      # ─── Upload the PyInstaller EXE ───────────────────────────────────────────
       - name: Upload Portable EXE
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist\main.exe         # adjust to your actual exe path
-          asset_name: app-portable.exe
+          asset_path: dist\main.exe
+          asset_name: feedmd-portable.exe
           asset_content_type: application/octet-stream
 
-      # Upload the Inno Setup installer
+      # ─── Upload the Inno Setup installer ─────────────────────────────────────
       - name: Upload Installer
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: output\*.exe      # adjust to where ISCC put it
-          asset_name: app-installer.exe
+          asset_path: release\setup.exe
+          asset_name: feedmd-installer.exe
           asset_content_type: application/octet-stream
