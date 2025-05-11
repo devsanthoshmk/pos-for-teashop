@@ -1,4 +1,8 @@
-name: Build Installer
+name: Build Installer & Release
+
+# give this workflow permission to push tags, create/releases, upload assets
+permissions:
+  contents: write
 
 on:
   push:
