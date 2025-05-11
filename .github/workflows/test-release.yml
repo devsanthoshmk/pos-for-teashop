@@ -13,7 +13,8 @@ env:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -43,9 +44,3 @@ jobs:
       - name: Upload setup.iss to release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: setup.iss
-          asset_name: ChaiTime-BSSetup.exe
-          tag: ${{ env.RELEASE_VERSION }}
-          overwrite: true
-          body: "Releasing setup exe"
