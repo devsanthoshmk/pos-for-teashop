@@ -1,5 +1,9 @@
 name: Build Installer
 
+permissions:
+  contents: write     # allow creating/updating releases and uploading assets
+
+
 on:
   push:
     branches: [ tea-shop ]
