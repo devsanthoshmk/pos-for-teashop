@@ -54,7 +54,8 @@ function addItem(ele){
                   <td>${itemtot}</td>
                   <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
-  tot+=itemtot;
+  tot+=item.price-0;
+
 
   if (isFirst) {
     billit.innerHTML=data
@@ -109,7 +110,8 @@ function removeItem(ele){
                   <td class="print-hide"><button class="delete-btn" data-id="blling-2" data-itemid="${itemid}" onclick="removeItem(this)">×</button></td>
               </tr>`;
 
-  tot-=item.price;
+  tot-=item.price-0;
+
 
   if (settings.tax_on_every===true){
     taxamt-=item.tax-0
