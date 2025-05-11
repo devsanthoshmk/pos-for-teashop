@@ -1,7 +1,7 @@
 name: Build Installer & Release
 
 permissions:
-  contents: write   # allow write to repo contents for release and assets
+  contents: write
 
 on:
   push:
@@ -44,26 +44,33 @@ jobs:
       - name: Create or update GitHub Release
         id: release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           name: "TeaShop ${{ env.RELEASE_VERSION }}"
-          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Upload portable EXE to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: dist/main.exe
           asset_name: TeaShopPortable-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
-          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Upload installer to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
           asset_path: Output/*.exe
           asset_name: TeaShopInstaller-${{ env.RELEASE_VERSION }}.exe
           asset_content_type: application/octet-stream
-          token: ${{ secrets.PAT_TOKEN }}
 
+# --------------------------------------------
+# IMPORTANT:
+# Ensure you have a classic PAT in Secrets.PAT_TOKEN with full repo scope.
+# We set GITHUB_TOKEN env to PAT_TOKEN for auth.
