@@ -222,7 +222,7 @@ const to_edit={}; //used to check is there are any empty row created
 function globals_inventory(){
 
     if (settings.tax_on_every===true){
-        document.getElementById('tax-on-item').style.display='flex'
+        document.getElementById('tax-on-item').style.display='table-cell'
     }
 
     // Initialize inventory data
